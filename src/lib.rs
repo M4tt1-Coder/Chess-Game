@@ -1,16 +1,20 @@
 //mod integretation
+pub mod components;
 pub mod enums;
 pub mod helper;
-pub mod strucs;
+pub mod structs;
+pub mod traits;
 
 //using statements
 use eframe::App;
 use std::time::Duration;
-
 use helper::default_field;
-use strucs::Field;
+use structs::{Field, Figure};
 
-use enums::{PlayMode, Winner};
+use enums::{PlayMode, Winner, Environment};
+
+use components::header_component::render_header;
+
 #[derive(PartialEq, Debug)]
 pub struct Game {
     //field
@@ -19,12 +23,20 @@ pub struct Game {
     pub winner: Winner,
     //play mode
     pub playmode: PlayMode,
-    //time limit
-    pub timelimit: Option<Duration>,
+    //time limit of player one
+    pub player_1_time: Option<Duration>,
+    //time limit of player two
+    pub player_2_time: Option<Duration>,
     //move
     pub _move: u16,
     //round
     pub round: u8,
+    //score of players
+    pub score: Vec<u8>,
+    //those figure who were thrown out -> to display it in the dashboard
+    pub thrown_figures: Vec<Figure>,
+    //environment -> default is local environment for development
+    pub environment: Environment,
 }
 
 impl Game {
@@ -34,9 +46,13 @@ impl Game {
             field: default_field(),
             winner: Winner::NotSet,
             playmode: PlayMode::NotSet,
-            timelimit: None,
+            player_1_time: None,
+            player_2_time: None,
+            score: vec![0,0], 
             _move: 0,
             round: 0,
+            thrown_figures: vec![],
+            environment: Environment::Local,
         }
     }
     //set game to default state when starting a new game
@@ -44,7 +60,9 @@ impl Game {
         self.field = default_field();
         self.winner = Winner::NotSet;
         self.playmode = PlayMode::NotSet;
-        self.timelimit = None;
+        self.player_1_time = None;
+        self.player_2_time = None;
+        self.score = vec![0,0];
         self._move = 0;
         self.round += 1;
     }
@@ -52,10 +70,10 @@ impl Game {
 
 impl App for Game {
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
-        todo!()
+        render_header(ctx, self);
     }
 
     fn auto_save_interval(&self) -> std::time::Duration {
-        std::time::Duration::from_secs(30)
+        std::time::Duration::from_millis(200)
     }
 }

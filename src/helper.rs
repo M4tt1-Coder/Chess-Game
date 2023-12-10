@@ -1,4 +1,5 @@
-use crate::{strucs::{Field, Figure}, enums::{FigureColor, FigureType}};
+use crate::{structs::{Field, Figure}, enums::{FigureColor, FigureType}};
+use eframe::egui::{Ui, RichText};
 
 //8 x 8 field with default figure posisions
 pub fn default_field() -> Vec<Vec<Field>>{
@@ -7,7 +8,7 @@ pub fn default_field() -> Vec<Vec<Field>>{
         vec![
             Field{
                 content: Some(Figure{
-                    figure_type: FigureType::Rock,
+                    figure_type: FigureType::Rook,
                     thrown: false,
                     color: FigureColor::White,
                 }),
@@ -63,7 +64,7 @@ pub fn default_field() -> Vec<Vec<Field>>{
             },
             Field{
                 content: Some(Figure{
-                    figure_type: FigureType::Rock,
+                    figure_type: FigureType::Rook,
                     thrown: false,
                     color: FigureColor::White,
                 }),
@@ -344,11 +345,11 @@ pub fn default_field() -> Vec<Vec<Field>>{
                 position: (6, 7),
             }
         ],
-        //row 2
+        //row 8
         vec![
             Field{
                 content: Some(Figure{
-                    figure_type: FigureType::Rock,
+                    figure_type: FigureType::Rook,
                     thrown: false,
                     color: FigureColor::White,
                 }),
@@ -404,7 +405,7 @@ pub fn default_field() -> Vec<Vec<Field>>{
             },
             Field{
                 content: Some(Figure{
-                    figure_type: FigureType::Rock,
+                    figure_type: FigureType::Rook,
                     thrown: false,
                     color: FigureColor::White,
                 }),
@@ -413,3 +414,13 @@ pub fn default_field() -> Vec<Vec<Field>>{
         ]
     ]
 }
+
+pub fn horizontal_seperator(ui: &mut Ui){
+    ui.add_space(15.);
+
+    ui.label(RichText::new("|").size(20.));
+
+    ui.add_space(15.);   
+}
+
+
