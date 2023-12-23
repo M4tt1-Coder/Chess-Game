@@ -10,7 +10,7 @@ pub enum Winner {
 pub enum PlayMode {
     UserVsUserLocal,
     UserVsUserOnline,
-    UserVsKI,
+    UserVsAI,
     NotSet,
 }
 

@@ -7,6 +7,6 @@ edition = "2021"
 
 [dependencies]
 eframe="0.24.1"
-image={version="0.24.7", features=["png"]}
+image={version="0.24.7", features=["png", "jpeg"]}
 egui_extras={version="0.24.1", features=["all_loaders"]}
 duration-string={version = "0.3.0"}

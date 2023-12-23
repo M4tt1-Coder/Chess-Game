@@ -13,7 +13,7 @@ use structs::{Field, Figure};
 
 use enums::{PlayMode, Winner, Environment};
 
-use components::header_component::render_header;
+use components::{header_component::render_header, mode_choice_component::render_playmode_component};
 
 #[derive(PartialEq, Debug)]
 pub struct Game {
@@ -70,7 +70,9 @@ impl Game {
 
 impl App for Game {
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
+        //TODO - logic when to show a specific component
         render_header(ctx, self);
+        render_playmode_component(ctx, self);
     }
 
     fn auto_save_interval(&self) -> std::time::Duration {

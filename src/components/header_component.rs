@@ -1,49 +1,46 @@
 //using statements
-use crate::helper::horizontal_seperator;
+use crate::helper::vertical_seperator;
 use crate::{Environment, Game, PlayMode};
 use eframe::egui::{Align, Color32, Context, Layout, RichText, TopBottomPanel};
 
 pub fn render_header(ctx: &Context, game: &mut Game) {
     TopBottomPanel::top("status-bar").show(ctx, |ui| {
-        ui.with_layout(
-            Layout::left_to_right(Align::Center).with_main_justify(true),
-            |ui| {
-                //chosen playing mode
-                ui.label(
-                    RichText::new(get_string_for_playing_mode(game))
-                        .color(Color32::WHITE)
-                        .underline()
-                        .size(15.),
-                );
+        ui.with_layout(Layout::left_to_right(Align::Center), |ui| {
+            //chosen playing mode
+            ui.label(
+                RichText::new(get_string_for_playing_mode(game))
+                    .color(Color32::WHITE)
+                    .underline()
+                    .size(15.),
+            );
 
-                horizontal_seperator(ui);
+            vertical_seperator(ui);
 
-                //scoreboard
-                ui.label(
-                    RichText::new(format!("Score: {} : {}", game.score[0], game.score[1]))
-                        .color(Color32::WHITE)
-                        .size(15.),
-                );
+            //scoreboard
+            ui.label(
+                RichText::new(format!("Score: {} : {}", game.score[0], game.score[1]))
+                    .color(Color32::WHITE)
+                    .size(15.),
+            );
 
-                horizontal_seperator(ui);
+            vertical_seperator(ui);
 
-                //scoreboard
-                ui.label(
-                    RichText::new(format!("Round: {}", game.round))
-                        .color(Color32::WHITE)
-                        .size(15.),
-                );
+            //round
+            ui.label(
+                RichText::new(format!("Round: {}", game.round))
+                    .color(Color32::WHITE)
+                    .size(15.),
+            );
 
-                horizontal_seperator(ui);
+            vertical_seperator(ui);
 
-                //playing environment (local, browser)
-                ui.label(
-                    RichText::new(get_string_for_game_environment(game))
-                        .color(Color32::WHITE)
-                        .size(15.),
-                );
-            },
-        );
+            //playing environment (local, browser)
+            ui.label(
+                RichText::new(get_string_for_game_environment(game))
+                    .color(Color32::WHITE)
+                    .size(15.),
+            );
+        });
     });
 }
 
@@ -56,7 +53,7 @@ fn get_string_for_playing_mode(game: &Game) -> String {
         return String::from("Player vs Player");
     }
 
-    if game.playmode == PlayMode::UserVsKI {
+    if game.playmode == PlayMode::UserVsAI {
         return String::from("Player vs AI");
     }
 
