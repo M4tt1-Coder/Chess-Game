@@ -1,7 +1,7 @@
 //using statements
 use eframe::egui::{self, Align, CentralPanel, Color32, Context, ImageButton, Layout, RichText};
 
-use crate::{enums::PlayMode, helper::horizontal_seperator, Game};
+use crate::{enums::{PlayMode, Environment}, helper::horizontal_seperator, Game};
 
 pub fn render_playmode_component(ctx: &Context, game: &mut Game) {
     //central penal
@@ -75,6 +75,7 @@ pub fn render_playmode_component(ctx: &Context, game: &mut Game) {
                 .clicked()
             {
                 game.playmode = PlayMode::UserVsUserOnline;
+                game.environment = Environment::Browser;
             }
 
             ui.add_space(15.);

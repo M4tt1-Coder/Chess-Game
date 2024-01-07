@@ -44,6 +44,7 @@ pub fn render_header(ctx: &Context, game: &mut Game) {
     });
 }
 
+#[inline]
 fn get_string_for_playing_mode(game: &Game) -> String {
     if game.playmode == PlayMode::NotSet {
         return String::from("No chosen playing mode");
@@ -57,19 +58,20 @@ fn get_string_for_playing_mode(game: &Game) -> String {
         return String::from("Player vs AI");
     }
 
-    return String::new();
+    String::new()
 }
 
+#[inline]
 fn get_string_for_game_environment(game: &Game) -> String {
     match game.environment {
         Environment::Browser => {
-            return String::from("Browser");
+            String::from("Browser")
         }
         Environment::Local => {
-            return String::from("Local");
+            String::from("Local")
         }
         Environment::NotSet => {
-            return String::from("Not chosen ... ");
+            String::from("Not chosen ... ")
         }
     }
 }

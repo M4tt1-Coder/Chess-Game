@@ -1,15 +1,49 @@
-use crate::{enums::{FigureType, FigureColor}, traits::FigureTrait};
+use crate::{
+    enums::{FigureColor, FigureType},
+    traits::FigureTrait,
+};
 
 #[derive(PartialEq, Debug)]
-pub struct Field{
-    //playing figure in the field when there's one 
+pub struct Player {
+    //a specific name for the player
+    pub name: String,
+    //seconds used for the decreament for every second a player takes to make a move
+    pub seconds: u16,
+    //if its the players turn or not
+    pub turn: bool,
+}
+
+impl Default for Player{
+    fn default() -> Self{
+        Self::new()
+    }
+}
+
+impl Player {
+    pub fn new() -> Player {
+        Player {
+            name: String::new(),
+            seconds: 0,
+            turn: false,
+        }
+    }
+
+    pub fn update(&mut self, secs: u16, name: String) {
+        self.name = name;
+        self.seconds = secs;
+    }
+}
+
+#[derive(PartialEq, Debug)]
+pub struct Field {
+    //playing figure in the field when there's one
     pub content: Option<Figure>,
     //position on the field -> more used for validation purposes
     pub position: (u8, u8),
 }
 
 #[derive(PartialEq, Debug)]
-pub struct Figure{
+pub struct Figure {
     //how the figure can move -> defines the figure typ
     pub figure_type: FigureType,
     //sets if the figure was thrown out
@@ -20,15 +54,15 @@ pub struct Figure{
 
 impl Figure {
     pub fn new(figure_type: FigureType, figure_color: FigureColor) -> Figure {
-        Figure{
+        Figure {
             figure_type,
             thrown: false,
-            color: figure_color
+            color: figure_color,
         }
     }
 }
 
-impl FigureTrait for Figure{
+impl FigureTrait for Figure {
     fn get_thrown_out(&mut self) {
         self.thrown = true;
     }

@@ -33,3 +33,6 @@ fn main() -> Result<(), Error>{
         Box::new(game)
     }))
 }
+
+//TODO - settings component to set name players or time choice
+//TODO - benchmarking the performance

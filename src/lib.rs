@@ -3,17 +3,20 @@ pub mod components;
 pub mod enums;
 pub mod helper;
 pub mod structs;
+pub mod tests;
 pub mod traits;
+pub mod utils;
 
 //using statements
 use eframe::App;
-use std::time::Duration;
 use helper::default_field;
-use structs::{Field, Figure};
+use structs::{Field, Figure, Player};
 
-use enums::{PlayMode, Winner, Environment};
+use enums::{Environment, PlayMode, Winner};
 
-use components::{header_component::render_header, mode_choice_component::render_playmode_component};
+use components::{
+    header_component::render_header, mode_choice_component::render_playmode_component,
+};
 
 #[derive(PartialEq, Debug)]
 pub struct Game {
@@ -23,10 +26,10 @@ pub struct Game {
     pub winner: Winner,
     //play mode
     pub playmode: PlayMode,
-    //time limit of player one
-    pub player_1_time: Option<Duration>,
-    //time limit of player two
-    pub player_2_time: Option<Duration>,
+    //prop player one
+    pub player_one: Player,
+    //prop player two
+    pub player_two: Player,
     //move
     pub _move: u16,
     //round
@@ -39,6 +42,12 @@ pub struct Game {
     pub environment: Environment,
 }
 
+impl Default for Game {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Game {
     //create new game instance
     pub fn new() -> Game {
@@ -46,9 +55,9 @@ impl Game {
             field: default_field(),
             winner: Winner::NotSet,
             playmode: PlayMode::NotSet,
-            player_1_time: None,
-            player_2_time: None,
-            score: vec![0,0], 
+            player_one: Player::new(),
+            player_two: Player::new(),
+            score: vec![0, 0],
             _move: 0,
             round: 0,
             thrown_figures: vec![],
@@ -60,11 +69,19 @@ impl Game {
         self.field = default_field();
         self.winner = Winner::NotSet;
         self.playmode = PlayMode::NotSet;
-        self.player_1_time = None;
-        self.player_2_time = None;
-        self.score = vec![0,0];
+        self.player_one = Player::new();
+        self.player_two = Player::new();
+        self.score = vec![0, 0];
         self._move = 0;
         self.round += 1;
+    }
+
+    pub fn subtract_second(&mut self) {
+        if self.player_one.turn {
+            self.player_one.seconds -= 1;
+        } else if self.player_two.turn {
+            self.player_two.seconds -= 1;
+        }
     }
 }
 
