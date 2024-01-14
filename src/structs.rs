@@ -1,10 +1,11 @@
 use crate::{
     enums::{FigureColor, FigureType},
-    traits::FigureTrait,
+    traits::FigureTrait, helper::get_player_figure_color,
 };
 
 #[derive(PartialEq, Debug)]
 pub struct Player {
+    pub figure_color: FigureColor,
     //a specific name for the player
     pub name: String,
     //seconds used for the decreament for every second a player takes to make a move
@@ -13,18 +14,13 @@ pub struct Player {
     pub turn: bool,
 }
 
-impl Default for Player{
-    fn default() -> Self{
-        Self::new()
-    }
-}
-
 impl Player {
-    pub fn new() -> Player {
+    pub fn new(player_number: u8, current_round: u8) -> Player {
         Player {
-            name: String::new(),
+            figure_color: get_player_figure_color(player_number, current_round),
+            name: format!("Player {}", player_number), //default implementation
             seconds: 0,
-            turn: false,
+            turn: true,
         }
     }
 

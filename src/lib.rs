@@ -15,8 +15,12 @@ use structs::{Field, Figure, Player};
 use enums::{Environment, PlayMode, Winner};
 
 use components::{
-    header_component::render_header, mode_choice_component::render_playmode_component,
+    header_component::render_header, mode_choice_component::render_playmode_component, chess_board_component::render_chess_board,
 };
+
+//constants
+const PLAYER_ONE_NUMBER: u8 = 1;
+const PLAYER_TWO_NUMBER: u8 = 2;
 
 #[derive(PartialEq, Debug)]
 pub struct Game {
@@ -55,8 +59,8 @@ impl Game {
             field: default_field(),
             winner: Winner::NotSet,
             playmode: PlayMode::NotSet,
-            player_one: Player::new(),
-            player_two: Player::new(),
+            player_one: Player::new(PLAYER_ONE_NUMBER, 1),
+            player_two: Player::new(PLAYER_TWO_NUMBER, 1),
             score: vec![0, 0],
             _move: 0,
             round: 0,
@@ -69,8 +73,8 @@ impl Game {
         self.field = default_field();
         self.winner = Winner::NotSet;
         self.playmode = PlayMode::NotSet;
-        self.player_one = Player::new();
-        self.player_two = Player::new();
+        self.player_one = Player::new(PLAYER_ONE_NUMBER, self.round);
+        self.player_two = Player::new(PLAYER_TWO_NUMBER, self.round);
         self.score = vec![0, 0];
         self._move = 0;
         self.round += 1;
@@ -89,10 +93,11 @@ impl App for Game {
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
         //TODO - logic when to show a specific component
         render_header(ctx, self);
-        render_playmode_component(ctx, self);
+        //render_playmode_component(ctx, self);
+        render_chess_board(ctx, self);
     }
 
     fn auto_save_interval(&self) -> std::time::Duration {
-        std::time::Duration::from_millis(200)
+        std::time::Duration::from_millis(100)
     }
 }

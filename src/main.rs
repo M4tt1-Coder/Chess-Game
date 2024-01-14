@@ -12,6 +12,8 @@ use Chess_Game::Game;
 /// 
 /// You can check out the documentation here: https://docs.rs/egui/latest/egui/
 fn main() -> Result<(), Error>{
+    //TODO - implement ticker out of app thread
+
     //create main game instance 
     let game = Game::new();
 

@@ -28,6 +28,7 @@ pub enum FigureType {
 pub enum FigureColor {
     White,
     Black,
+    NotFound
 }
 #[derive(PartialEq, Debug)]
 pub enum Environment {
