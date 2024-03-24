@@ -15,15 +15,23 @@ use structs::{Field, Figure, Player};
 use enums::{Environment, PlayMode, Winner};
 
 use components::{
-    header_component::render_header, mode_choice_component::render_playmode_component, chess_board_component::render_chess_board,
+    chess_board_component::render_chess_board,
+    header_component::render_header,
+    //mode_choice_component::render_playmode_component,
 };
+//use utils::ticker::Ticker;
+
+use std::sync::{Arc, Mutex};
 
 //constants
 const PLAYER_ONE_NUMBER: u8 = 1;
 const PLAYER_TWO_NUMBER: u8 = 2;
+const SAVE_INTERVAL: u64 = 10;
+pub const FIELD_SIZE: f32 = 55.;
 
-#[derive(PartialEq, Debug)]
+//#[derive(Debug, PartialEq)]
 pub struct Game {
+    //pub ticker: Ticker,
     //field
     pub field: Vec<Vec<Field>>,
     //winner
@@ -31,9 +39,11 @@ pub struct Game {
     //play mode
     pub playmode: PlayMode,
     //prop player one
-    pub player_one: Player,
+    // pub player_one: Player,
+    pub player_one: Arc<Mutex<Player>>,
     //prop player two
-    pub player_two: Player,
+    // pub player_two: Player,
+    pub player_two: Arc<Mutex<Player>>,
     //move
     pub _move: u16,
     //round
@@ -46,21 +56,23 @@ pub struct Game {
     pub environment: Environment,
 }
 
-impl Default for Game {
-    fn default() -> Self {
-        Self::new()
-    }
-}
+// impl Default for Game {
+//     fn default() -> Self {
+//         Self::new(Ticker::new(self))
+//     }
+// }
+
 
 impl Game {
     //create new game instance
-    pub fn new() -> Game {
+    pub fn new(/*ticker: Ticker*/) -> Game {
         Game {
+            //ticker,
             field: default_field(),
             winner: Winner::NotSet,
             playmode: PlayMode::NotSet,
-            player_one: Player::new(PLAYER_ONE_NUMBER, 1),
-            player_two: Player::new(PLAYER_TWO_NUMBER, 1),
+            player_one: Arc::new(Mutex::new(Player::new(PLAYER_ONE_NUMBER, 1))),
+            player_two: Arc::new(Mutex::new(Player::new(PLAYER_TWO_NUMBER, 1))),
             score: vec![0, 0],
             _move: 0,
             round: 0,
@@ -73,24 +85,29 @@ impl Game {
         self.field = default_field();
         self.winner = Winner::NotSet;
         self.playmode = PlayMode::NotSet;
-        self.player_one = Player::new(PLAYER_ONE_NUMBER, self.round);
-        self.player_two = Player::new(PLAYER_TWO_NUMBER, self.round);
+        self.player_one = Arc::new(Mutex::new(Player::new(PLAYER_ONE_NUMBER, self.round)));
+        self.player_two = Arc::new(Mutex::new(Player::new(PLAYER_TWO_NUMBER, self.round)));
         self.score = vec![0, 0];
         self._move = 0;
         self.round += 1;
     }
 
     pub fn subtract_second(&mut self) {
-        if self.player_one.turn {
-            self.player_one.seconds -= 1;
-        } else if self.player_two.turn {
-            self.player_two.seconds -= 1;
+        // if self.player_one.turn {
+        //     self.player_one.seconds -= 1;
+        // } else if self.player_two.turn {
+        //     self.player_two.seconds -= 1;
+        // }
+        if self.player_one.lock().unwrap().turn {
+            self.player_one.lock().unwrap().seconds -= 1;
+        } else if self.player_two.lock().unwrap().turn {
+            self.player_two.lock().unwrap().seconds -= 1;
         }
     }
 }
 
 impl App for Game {
-    fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
         //TODO - logic when to show a specific component
         render_header(ctx, self);
         //render_playmode_component(ctx, self);
@@ -98,6 +115,6 @@ impl App for Game {
     }
 
     fn auto_save_interval(&self) -> std::time::Duration {
-        std::time::Duration::from_millis(100)
+        std::time::Duration::from_millis(SAVE_INTERVAL)
     }
 }

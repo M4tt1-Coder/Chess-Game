@@ -19,7 +19,7 @@ impl Player {
         Player {
             figure_color: get_player_figure_color(player_number, current_round),
             name: format!("Player {}", player_number), //default implementation
-            seconds: 0,
+            seconds: 150,
             turn: true,
         }
     }
