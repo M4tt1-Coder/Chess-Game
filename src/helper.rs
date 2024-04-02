@@ -1,8 +1,10 @@
 //use std::{thread, time::Duration};
 
+use std::sync::{Arc, Mutex};
+
 use crate::{
     enums::{FigureColor, FigureType},
-    structs::{Field, Figure, Player},
+    structs::{Board, Field, Figure, Player},
     //utils::ticker::Ticker,
     Game,
 };
@@ -10,76 +12,92 @@ use eframe::egui::{include_image, Color32, Context, ImageSource, RichText, Ui};
 
 //constants
 //const SECOND: u16 = 1;
+//when a time dimension (minutes, seconds, etc.) have just a char number -> '09' or '04' not '14'
+const ONE_DIGIT_BOUNDRY: u16 = 10;
+const DEFAULT_SELECTED: bool = false;
 
 //8 x 8 field with default figure posisions
+/// Returns the default field datastructure
+///
+/// The position property of: (x, y) describes the position of the field within the chess board
+/// x = index of the row
+/// y = index of the column
 #[inline]
-pub fn default_field() -> Vec<Vec<Field>> {
-    vec![
+pub fn default_field() -> Arc<Mutex<Board>> {
+    Arc::new(Mutex::new(Board::new(vec![
         //first row out of whites view
         vec![
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Rook,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (0, 0),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Knight,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (0, 1),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Bishop,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (0, 2),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::King,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (0, 3),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Queen,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (0, 4),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Bishop,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (0, 5),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Knight,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (0, 6),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Rook,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (0, 7),
+                selected: DEFAULT_SELECTED,
             },
         ],
         //row 2
@@ -88,65 +106,73 @@ pub fn default_field() -> Vec<Vec<Field>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (1, 0),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (1, 1),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (1, 2),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (1, 3),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (1, 4),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (1, 5),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (1, 6),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::White,
+                    color: FigureColor::Black,
                 }),
                 position: (1, 7),
+                selected: DEFAULT_SELECTED,
             },
         ],
         //row 3
@@ -154,34 +180,42 @@ pub fn default_field() -> Vec<Vec<Field>> {
             Field {
                 content: None,
                 position: (2, 0),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (2, 1),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (2, 2),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (2, 3),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (2, 4),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (2, 5),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (2, 6),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (2, 7),
+                selected: DEFAULT_SELECTED,
             },
         ],
         //row 4
@@ -189,34 +223,42 @@ pub fn default_field() -> Vec<Vec<Field>> {
             Field {
                 content: None,
                 position: (3, 0),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (3, 1),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (3, 2),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (3, 3),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (3, 4),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (3, 5),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (3, 6),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (3, 7),
+                selected: DEFAULT_SELECTED,
             },
         ],
         //row 5
@@ -224,34 +266,42 @@ pub fn default_field() -> Vec<Vec<Field>> {
             Field {
                 content: None,
                 position: (4, 0),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (4, 1),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (4, 2),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (4, 3),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (4, 4),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (4, 5),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (4, 6),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (4, 7),
+                selected: DEFAULT_SELECTED,
             },
         ],
         //row 6
@@ -259,34 +309,42 @@ pub fn default_field() -> Vec<Vec<Field>> {
             Field {
                 content: None,
                 position: (5, 0),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (5, 1),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (5, 2),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (5, 3),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (5, 4),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (5, 5),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (5, 6),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: None,
                 position: (5, 7),
+                selected: DEFAULT_SELECTED,
             },
         ],
         //row 7
@@ -298,6 +356,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (6, 0),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -306,6 +365,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (6, 1),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -314,6 +374,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (6, 2),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -322,6 +383,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (6, 3),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -330,6 +392,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (6, 4),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -338,6 +401,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (6, 5),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -346,6 +410,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (6, 6),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -354,6 +419,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (6, 7),
+                selected: DEFAULT_SELECTED,
             },
         ],
         //row 8
@@ -365,6 +431,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (7, 0),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -373,6 +440,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (7, 1),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -381,6 +449,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (7, 2),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -389,6 +458,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (7, 3),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -397,6 +467,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (7, 4),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -405,6 +476,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (7, 5),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -413,6 +485,7 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (7, 6),
+                selected: DEFAULT_SELECTED,
             },
             Field {
                 content: Some(Figure {
@@ -421,9 +494,10 @@ pub fn default_field() -> Vec<Vec<Field>> {
                     color: FigureColor::White,
                 }),
                 position: (7, 7),
+                selected: DEFAULT_SELECTED,
             },
         ],
-    ]
+    ])))
 }
 
 pub fn vertical_seperator(ui: &mut Ui) {
@@ -516,7 +590,6 @@ pub fn render_thrown_pieces(game: &Game, ui: &mut Ui) {
     }
 }
 
-//TODO - Needs more conditions for the output format
 //private functions
 #[inline]
 fn get_player_time_format(seconds: u16) -> String {
@@ -529,11 +602,23 @@ fn get_player_time_format(seconds: u16) -> String {
     let minutes = seconds / 60;
     let secs = seconds % 60;
 
-    if hours != 0 {
-        format!("{}:{}", minutes, secs)
-    } else {
-        format!("{}:{}:{}", hours, minutes, secs)
+    //apply the time component strings
+    //hours
+    let hours_string = hours.to_string();
+
+    //minutes
+    let mut minutes_string = minutes.to_string();
+    if minutes < ONE_DIGIT_BOUNDRY {
+        minutes_string = format!("0{}", minutes);
     }
+
+    //seconds
+    let mut seconds_string = secs.to_string();
+    if secs < ONE_DIGIT_BOUNDRY {
+        seconds_string = format!("0{}", secs);
+    }
+
+    format!("{}:{}:{}", hours_string, minutes_string, seconds_string)
 }
 
 fn render_single_figure(figure_typ: &FigureType, figure_color: &FigureColor, ui: &mut Ui) {

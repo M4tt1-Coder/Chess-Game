@@ -13,8 +13,6 @@ use Chess_Game::Game;
 ///
 /// You can check out the documentation here: https://docs.rs/egui/latest/egui/
 fn main() -> Result<(), Error> {
-    //TODO - Tried to subtract the second of the players in the thread -> if it doesn't work reverse the changes
-
     //create main game instance
     let game = Game::new(/*time_ticker*/);
 
@@ -47,3 +45,4 @@ fn main() -> Result<(), Error> {
 
 //TODO - settings component to set name players or time choice
 //TODO - Implement a controller interface to control the figure movements, selecting a figure
+//TODO - Add benchmarks & tests to general new functions and methods

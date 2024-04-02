@@ -40,8 +40,6 @@ fn start_ticker(
     let (_, receiver) = channel();
 
     let handle = thread::spawn(move || loop {
-        println!("tick");
-
         thread::sleep(TICKER_DURATION);
 
         let player_one_turn: bool = match player_one.try_lock() {

@@ -10,9 +10,9 @@ pub mod utils;
 //using statements
 use eframe::App;
 use helper::default_field;
-use structs::{Field, Figure, Player};
+use structs::{replicate, Board, Field, Figure, Player};
 
-use enums::{Environment, PlayMode, Winner};
+use enums::{Environment, FigureColor, FigureType, PlayMode, Winner};
 
 use components::{
     chess_board_component::render_chess_board,
@@ -33,7 +33,7 @@ pub const FIELD_SIZE: f32 = 55.;
 pub struct Game {
     //pub ticker: Ticker,
     //field
-    pub field: Vec<Vec<Field>>,
+    pub field: Arc<Mutex<Board>>,
     //winner
     pub winner: Winner,
     //play mode
@@ -55,13 +55,6 @@ pub struct Game {
     //environment -> default is local environment for development
     pub environment: Environment,
 }
-
-// impl Default for Game {
-//     fn default() -> Self {
-//         Self::new(Ticker::new(self))
-//     }
-// }
-
 
 impl Game {
     //create new game instance
@@ -92,17 +85,105 @@ impl Game {
         self.round += 1;
     }
 
-    pub fn subtract_second(&mut self) {
-        // if self.player_one.turn {
-        //     self.player_one.seconds -= 1;
-        // } else if self.player_two.turn {
-        //     self.player_two.seconds -= 1;
-        // }
-        if self.player_one.lock().unwrap().turn {
-            self.player_one.lock().unwrap().seconds -= 1;
-        } else if self.player_two.lock().unwrap().turn {
-            self.player_two.lock().unwrap().seconds -= 1;
+    pub fn field_not_selected_anymore(&self) {
+        let board_clone = self.field.try_lock().unwrap();
+        let board = replicate(&board_clone.content);
+        drop(board_clone);
+        let mut x = 0;
+        let mut y = 0;
+        for row in &board {
+            for field in row {
+                if field.selected {
+                    x = field.position.0 as usize;
+                    y = field.position.1 as usize;
+                }
+            }
         }
+        self.dont_select_field_anymore(x, y);
+    }
+
+    fn dont_select_field_anymore(&self, x: usize, y: usize) {
+        let mut board_clone = self.field.try_lock().unwrap();
+        board_clone.content[x][y].selected = false;
+        drop(board_clone);
+        //self.field.try_lock().unwrap().content[x][y].selected = false;
+    }
+
+    fn select_field(&self, x: usize, y: usize) {
+        let mut board_clone = self.field.try_lock().unwrap();
+        board_clone.content[x][y].selected = true;
+        drop(board_clone);
+        // self.field.try_lock().unwrap().content[x][y].selected = true;
+    }
+
+    fn delete_field_content(&self, x: usize, y: usize) {
+        let mut board_clone = self.field.try_lock().unwrap();
+        board_clone.content[x][y].content = None;
+        drop(board_clone);
+        //self.field.try_lock().unwrap().content[x][y].content = None;
+    }
+
+    fn assign_new_field_content(&self, x: usize, y: usize, content: Option<Figure>) {
+        let mut board_clone = self.field.try_lock().unwrap();
+        board_clone.content[x][y].content = content;
+        drop(board_clone);
+        //self.field.try_lock().unwrap().content[x][y].content = content;
+    }
+
+    //TODO - Add logic that player just can move his own piece of his color
+    fn move_figure_to_new_field(&self, previous_field: &Field, new_field: &Field) {
+        let board_clone = self.field.try_lock().unwrap();
+        let board = replicate(&board_clone.content);
+        drop(board_clone);
+        //determine which field the pre_field resembles to
+        //-> take conent and put it in the new field
+        let mut figure_content: Option<Figure> = None;
+
+        for row in &board {
+            for field in row {
+                if field.position == previous_field.position {
+                    let piece = &field.content.as_ref().unwrap();
+                    let figure_type = match piece.figure_type {
+                        FigureType::Queen => FigureType::Queen,
+                        FigureType::Bishop => FigureType::Bishop,
+                        FigureType::King => FigureType::King,
+                        FigureType::Knight => FigureType::Knight,
+                        FigureType::Pawn => FigureType::Pawn,
+                        FigureType::Rook => FigureType::Rook,
+                    };
+                    let figure_color = match piece.color {
+                        FigureColor::White => FigureColor::White,
+                        FigureColor::Black => FigureColor::Black,
+                        _ => FigureColor::NotFound,
+                    };
+                    self.delete_field_content(field.position.0 as usize, field.position.1 as usize);
+
+                    figure_content = Some(Figure::new(figure_type, figure_color));
+                }
+            }
+        }
+
+        self.assign_new_field_content(
+            new_field.position.0 as usize,
+            new_field.position.1 as usize,
+            figure_content,
+        );
+    }
+
+    fn next_players_turn(&self) {
+        let mut player_one = self.player_one.try_lock().unwrap();
+        let mut player_two = self.player_two.try_lock().unwrap();
+
+        if player_one.turn {
+            player_one.turn = false;
+            player_two.turn = true;
+        } else {
+            player_one.turn = true;
+            player_two.turn = false;
+        }
+
+        drop(player_one);
+        drop(player_two);
     }
 }
 
