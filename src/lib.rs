@@ -19,6 +19,7 @@ use components::{
     header_component::render_header,
     //mode_choice_component::render_playmode_component,
 };
+use utils::chess_rules::can_player_move_this_pieces;
 //use utils::ticker::Ticker;
 
 use std::sync::{Arc, Mutex};
@@ -130,7 +131,6 @@ impl Game {
         //self.field.try_lock().unwrap().content[x][y].content = content;
     }
 
-    //TODO - Add logic that player just can move his own piece of his color
     fn move_figure_to_new_field(&self, previous_field: &Field, new_field: &Field) {
         let board_clone = self.field.try_lock().unwrap();
         let board = replicate(&board_clone.content);

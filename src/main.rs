@@ -44,5 +44,7 @@ fn main() -> Result<(), Error> {
 }
 
 //TODO - settings component to set name players or time choice
-//TODO - Implement a controller interface to control the figure movements, selecting a figure
+//TODO - Implement a controller interface to control the figure movements, selecting a figure -> implement a move struct to save the made moves during the game + for rules checking 
 //TODO - Add benchmarks & tests to general new functions and methods
+//TODO - Look unwrap was used -> possible errors should always be handled
+//TODO - Add a 'started' - boolean property to the game struct just start when the board fully rendered -> when hovering over a button -> set to true

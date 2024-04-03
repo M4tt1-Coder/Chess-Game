@@ -61,7 +61,6 @@ pub fn render_chess_board(ctx: &Context, game: &mut Game) {
                 drop(player_one);
             });
         });
-    //TODO - Think of chess rouls: a player can just move his pieces
     //rotate the board 180 degrees clockwise WHEN it is possible
     CentralPanel::default().show(ctx, |ui| {
         ui.with_layout(Layout::top_down(Align::Center), |ui| {

@@ -527,7 +527,7 @@ pub fn get_player_figure_color(player_number: u8, current_round: u8) -> FigureCo
             }
         }
         2 => {
-            if current_round % 2 == 0 {
+            if current_round % 2 == 1 {
                 FigureColor::Black
             } else {
                 FigureColor::White

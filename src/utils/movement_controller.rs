@@ -3,7 +3,7 @@
 //using statements
 use crate::{structs::Field, Game};
 
-use super::chess_rules::can_move_to_new_field;
+use super::chess_rules::{can_move_to_new_field, can_player_move_this_pieces};
 
 //constants
 
@@ -13,13 +13,17 @@ pub fn button_interaction(game: &Game, board: &Vec<Vec<Field>>, selected_field: 
     if let Some(field) = is_a_field_selected(board) {
         if field.content.is_some() {
             //check if the piece can move to this new selected field
-            if can_move_to_new_field(board, field, selected_field) {
+
+            if can_move_to_new_field(board, field, selected_field)//check if the planned piece is valid
+                && can_player_move_this_pieces(game, &field.content.as_ref().unwrap().color)
+            //depending on the players piece color and the selected figure's color -> allow the move or not
+            {
                 game.move_figure_to_new_field(field, selected_field);
+
+                game.next_players_turn();
             }
 
             game.field_not_selected_anymore();
-
-            game.next_players_turn();
 
             //dont want to move one figure in an infinite repetition
             // game.select_field(
