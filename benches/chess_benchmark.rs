@@ -1,37 +1,27 @@
-//use std::{thread, time::Duration};
-
-use std::sync::{Arc, Mutex};
-
-use crate::{
+use divan;
+use Chess_Game::{
     enums::{FigureColor, FigureType},
-    structs::{Board, Field, Figure, Player},
-    //utils::ticker::Ticker,
-    Game,
+    structs::{Field, Figure},
 };
-use eframe::egui::{include_image, Color32, Context, ImageSource, RichText, Ui};
 
-//constants
-//const SECOND: u16 = 1;
-//when a time dimension (minutes, seconds, etc.) have just a char number -> '09' or '04' not '14'
-const ONE_DIGIT_BOUNDRY: u16 = 10;
 const DEFAULT_SELECTED: bool = false;
 
-//8 x 8 field with default figure posisions
-/// Returns the default field datastructure
-///
-/// The position property of: (x, y) describes the position of the field within the chess board
-/// x = index of the row
-/// y = index of the column
+fn main() {
+    divan::main();
+}
+
+//Tests how fast the game field will be generated
 #[inline]
-pub fn default_field() -> Arc<Mutex<Board>> {
-    Arc::new(Mutex::new(Board::new(vec![
+#[divan::bench(sample_size = 1000, name = "Default Field")]
+pub fn default_field() -> Vec<Vec<Field>> {
+    vec![
         //first row out of whites view
         vec![
             Field {
                 content: Some(Figure {
                     figure_type: FigureType::Rook,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (0, 0),
                 selected: DEFAULT_SELECTED,
@@ -40,7 +30,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Knight,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (0, 1),
                 selected: DEFAULT_SELECTED,
@@ -49,7 +39,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Bishop,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (0, 2),
                 selected: DEFAULT_SELECTED,
@@ -58,7 +48,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::King,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (0, 3),
                 selected: DEFAULT_SELECTED,
@@ -67,7 +57,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Queen,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (0, 4),
                 selected: DEFAULT_SELECTED,
@@ -76,7 +66,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Bishop,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (0, 5),
                 selected: DEFAULT_SELECTED,
@@ -85,7 +75,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Knight,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (0, 6),
                 selected: DEFAULT_SELECTED,
@@ -94,7 +84,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Rook,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (0, 7),
                 selected: DEFAULT_SELECTED,
@@ -106,7 +96,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (1, 0),
                 selected: DEFAULT_SELECTED,
@@ -115,7 +105,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (1, 1),
                 selected: DEFAULT_SELECTED,
@@ -124,7 +114,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (1, 2),
                 selected: DEFAULT_SELECTED,
@@ -133,7 +123,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (1, 3),
                 selected: DEFAULT_SELECTED,
@@ -142,7 +132,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (1, 4),
                 selected: DEFAULT_SELECTED,
@@ -151,7 +141,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (1, 5),
                 selected: DEFAULT_SELECTED,
@@ -160,7 +150,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (1, 6),
                 selected: DEFAULT_SELECTED,
@@ -169,7 +159,7 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 content: Some(Figure {
                     figure_type: FigureType::Pawn,
                     thrown: false,
-                    color: FigureColor::Black,
+                    color: FigureColor::White,
                 }),
                 position: (1, 7),
                 selected: DEFAULT_SELECTED,
@@ -497,27 +487,14 @@ pub fn default_field() -> Arc<Mutex<Board>> {
                 selected: DEFAULT_SELECTED,
             },
         ],
-    ])))
+    ]
 }
 
-pub fn vertical_seperator(ui: &mut Ui) {
-    ui.add_space(15.);
-
-    ui.label(RichText::new("|").size(20.));
-
-    ui.add_space(15.);
-}
-
-pub fn horizontal_seperator(ui: &mut Ui) {
-    ui.add_space(15.);
-
-    ui.separator();
-
-    ui.add_space(15.);
-}
-
+//Detemine which color the user is trying to choose
 #[inline]
-pub fn get_player_figure_color(player_number: u8, current_round: u8) -> FigureColor {
+#[divan::bench(args = [1, 2, 5, 7, 8, 9], name = "Player figure color")]
+pub fn get_player_figure_color(current_round: u8) -> FigureColor {
+    let player_number: u8 = 1;
     match player_number {
         1 => {
             if current_round % 2 == 1 {
@@ -527,7 +504,7 @@ pub fn get_player_figure_color(player_number: u8, current_round: u8) -> FigureCo
             }
         }
         2 => {
-            if current_round % 2 == 1 {
+            if current_round % 2 == 0 {
                 FigureColor::Black
             } else {
                 FigureColor::White
@@ -537,194 +514,21 @@ pub fn get_player_figure_color(player_number: u8, current_round: u8) -> FigureCo
     }
 }
 
-pub fn render_player_dashboard_info(
-    //ticker: &Ticker,
-    player: &Player,
-    ui: &mut Ui,
-    _ctx: &Context,
-) {
-    ui.label(
-        RichText::new(&player.name)
-            .color(Color32::WHITE)
-            .size(15.)
-            .italics(),
-    );
-
-    ui.add_space(15.);
-
-    //poisonerror
-    //https://stackoverflow.com/questions/72855505/what-is-the-best-way-to-update-app-fields-from-another-thread-in-egui-in-rust
-    //https://stackoverflow.com/questions/75278336/egui-interaction-with-background-thread
-
-    ui.add_space(15.);
-
-    ui.label(
-        RichText::new(get_player_time_format(player.seconds))
-            .color(Color32::WHITE)
-            .size(15.),
-    );
-}
-
-pub fn render_thrown_pieces(game: &Game, ui: &mut Ui) {
-    let mut piece_counter: u8 = 1;
-    let mut pieces_left = true;
-    while pieces_left {
-        ui.horizontal(|ui| {
-            for piece in &game.thrown_figures {
-                render_single_figure(&piece.figure_type, &piece.color, ui);
-                if piece_counter % 5 == 0 {
-                    break;
-                }
-                piece_counter += 1;
-            }
-        });
-
-        //when there are not more then 5 figures -> stop the loop in the first iteration
-        if game.thrown_figures.len() < 5 {
-            pieces_left = false;
-        }
-
-        if piece_counter as usize == game.thrown_figures.len() {
-            pieces_left = false;
-        }
-    }
-}
-
-//private functions
+// Returns the time string layout to diplay on the UI
 #[inline]
+#[divan::bench(args = [20, 120,240,600,1200,3000, 6000, 10000], name = "Player time layout")]
 fn get_player_time_format(seconds: u16) -> String {
     if seconds == 0 {
         return String::from("No time limitation");
     }
 
-    //get the hours
-    let hours = seconds / 3600;
     let minutes = seconds / 60;
-    let secs = seconds % 60;
+    let hours = seconds / 3600;
+    let secs = seconds % 3600;
 
-    //apply the time component strings
-    //hours
-    let hours_string = hours.to_string();
-
-    //minutes
-    let mut minutes_string = minutes.to_string();
-    if minutes < ONE_DIGIT_BOUNDRY {
-        minutes_string = format!("0{}", minutes);
-    }
-
-    //seconds
-    let mut seconds_string = secs.to_string();
-    if secs < ONE_DIGIT_BOUNDRY {
-        seconds_string = format!("0{}", secs);
-    }
-
-    format!("{}:{}:{}", hours_string, minutes_string, seconds_string)
-}
-
-fn render_single_figure(figure_typ: &FigureType, figure_color: &FigureColor, ui: &mut Ui) {
-    match figure_color {
-        FigureColor::White => match figure_typ {
-            FigureType::Pawn => {
-                ui.image(include_image!("../static/Pawn_White.png"));
-            }
-            FigureType::Knight => {
-                ui.image(include_image!("../static/Knight_White.png"));
-            }
-            FigureType::Bishop => {
-                ui.image(include_image!("../static/Bishop_White.png"));
-            }
-            FigureType::Rook => {
-                ui.image(include_image!("../static/Rook_White.png"));
-            }
-            FigureType::Queen => {
-                ui.image(include_image!("../static/Queen_White.png"));
-            }
-            FigureType::King => {
-                ui.image(include_image!("../static/King_White.png"));
-            }
-        },
-        FigureColor::Black => match figure_typ {
-            FigureType::Pawn => {
-                ui.image(include_image!("../static/Pawn_Black.png"));
-            }
-            FigureType::Knight => {
-                ui.image(include_image!("../static/Knight_Black.png"));
-            }
-            FigureType::Bishop => {
-                ui.image(include_image!("../static/Bishop_Black.png"));
-            }
-            FigureType::Rook => {
-                ui.image(include_image!("../static/Rook_Black.png"));
-            }
-            FigureType::Queen => {
-                ui.image(include_image!("../static/Queen_Black.png"));
-            }
-            FigureType::King => {
-                ui.image(include_image!("../static/King_Black.png"));
-            }
-        },
-        _ => (),
-    };
-}
-
-//Get a field color based on the field coordinates
-pub fn get_field_color_on_coordinates(x: u8, y: u8) -> Color32 {
-    if y % 2 == 0 {
-        if x % 2 == 0 {
-            Color32::WHITE
-        } else {
-            Color32::BLACK
-        }
-    } else if x % 2 == 0 {
-        Color32::BLACK
+    if hours != 0 {
+        format!("{}:{}", minutes, secs)
     } else {
-        Color32::WHITE
-    }
-}
-
-//Return a an image representation based on figure color and type
-pub fn get_figure_path<'a>(figure_typ: &FigureType, figure_color: &FigureColor) -> ImageSource<'a> {
-    match figure_color {
-        FigureColor::White => match figure_typ {
-            FigureType::Pawn => {
-                include_image!("../static/Pawn_White.png")
-            }
-            FigureType::Knight => {
-                include_image!("../static/Knight_White.png")
-            }
-            FigureType::Bishop => {
-                include_image!("../static/Bishop_White.png")
-            }
-            FigureType::Rook => {
-                include_image!("../static/Rook_White.png")
-            }
-            FigureType::Queen => {
-                include_image!("../static/Queen_White.png")
-            }
-            FigureType::King => {
-                include_image!("../static/King_White.png")
-            }
-        },
-        FigureColor::Black => match figure_typ {
-            FigureType::Pawn => {
-                include_image!("../static/Pawn_Black.png")
-            }
-            FigureType::Knight => {
-                include_image!("../static/Knight_Black.png")
-            }
-            FigureType::Bishop => {
-                include_image!("../static/Bishop_Black.png")
-            }
-            FigureType::Rook => {
-                include_image!("../static/Rook_Black.png")
-            }
-            FigureType::Queen => {
-                include_image!("../static/Queen_Black.png")
-            }
-            FigureType::King => {
-                include_image!("../static/King_Black.png")
-            }
-        },
-        _ => ImageSource::from(""),
+        format!("{}:{}:{}", hours, minutes, secs)
     }
 }

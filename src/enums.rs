@@ -1,5 +1,5 @@
 #[derive(PartialEq, Debug)]
-pub enum Winner{
+pub enum Winner {
     Player1,
     Player2,
     Draw,
@@ -7,16 +7,16 @@ pub enum Winner{
 }
 
 #[derive(PartialEq, Debug)]
-pub enum PlayMode{
+pub enum PlayMode {
     UserVsUserLocal,
     UserVsUserOnline,
-    UserVsKI,
+    UserVsAI,
     NotSet,
 }
 
 #[derive(PartialEq, Debug)]
-pub enum FigureType{
-    Rock,
+pub enum FigureType {
+    Rook,
     Bishop,
     Knight,
     Queen,
@@ -25,7 +25,14 @@ pub enum FigureType{
 }
 
 #[derive(PartialEq, Debug)]
-pub enum FigureColor{
-    White, 
+pub enum FigureColor {
+    White,
     Black,
+    NotFound
+}
+#[derive(PartialEq, Debug)]
+pub enum Environment {
+    Browser,
+    Local,
+    NotSet,
 }
