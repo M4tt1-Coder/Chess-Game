@@ -1,26 +1,22 @@
 //TODO - Create a rule system that includes all chess rules
-// different pieces with different rules -> movement rules 
-// -> when can I throw one piece? 
-//     -> can I move there?
-//     -> is there a piece in way?
-//     -> does a check threatening my king? 
-// => two movement types: 1.) horizontal + vertical
-//                        2.) diagonal
-//  implement these as functions and enums for state resampling
-// => different pieces implement different movement patterns
+// different pieces with different rules -> movement rules
+// -> when can I throw one piece?    
+//     -> does a check threatening my king?
 
-
+// TODO - add a visual effect for fields where the piece can move
 
 //TODO - Look up special gaming rules
 // -> pawns can change into a different piece when they reach the opposite side of the board
 
 //using statements
 
-//constants
-
 use crate::{enums::FigureColor, structs::Field, Game};
 
-/// Checks all
+//constants
+
+/// The control point where all chess rules are executed
+///
+/// Returns true when all rules are followed
 pub fn can_move_to_new_field(
     board: &[Vec<Field>],
     previous_field: &Field,
@@ -29,6 +25,11 @@ pub fn can_move_to_new_field(
     true
 }
 
+/// Makes sure a player can't move a piece which isn't from it's color
+///
+/// -> return true when it's the players color
+///
+/// -> return false when it's not
 pub fn can_player_move_this_pieces(game: &Game, piece_color: &FigureColor) -> bool {
     let mut output = false;
 

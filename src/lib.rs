@@ -19,7 +19,7 @@ use components::{
     header_component::render_header,
     //mode_choice_component::render_playmode_component,
 };
-use utils::chess_rules::can_player_move_this_pieces;
+
 //use utils::ticker::Ticker;
 
 use std::sync::{Arc, Mutex};
@@ -33,27 +33,25 @@ pub const FIELD_SIZE: f32 = 55.;
 //#[derive(Debug, PartialEq)]
 pub struct Game {
     //pub ticker: Ticker,
-    //field
+    /// field
     pub field: Arc<Mutex<Board>>,
-    //winner
+    /// winner
     pub winner: Winner,
-    //play mode
+    /// play mode
     pub playmode: PlayMode,
-    //prop player one
-    // pub player_one: Player,
+    /// prop player one
     pub player_one: Arc<Mutex<Player>>,
-    //prop player two
-    // pub player_two: Player,
+    /// prop player two
     pub player_two: Arc<Mutex<Player>>,
-    //move
+    /// move
     pub _move: u16,
-    //round
+    /// round
     pub round: u8,
-    //score of players
+    /// score of players
     pub score: Vec<u8>,
-    //those figure who were thrown out -> to display it in the dashboard
+    /// those figure who were thrown out -> to display it in the dashboard
     pub thrown_figures: Vec<Figure>,
-    //environment -> default is local environment for development
+    /// environment -> default is local environment for development
     pub environment: Environment,
 }
 

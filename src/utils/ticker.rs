@@ -63,15 +63,3 @@ fn start_ticker(
 
     (handle, receiver)
 }
-
-impl Iterator for &Ticker {
-    type Item = ();
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.receiver.recv().is_ok() {
-            Some(())
-        } else {
-            None
-        }
-    }
-}
