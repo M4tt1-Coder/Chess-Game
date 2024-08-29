@@ -67,9 +67,9 @@ pub fn render_chess_board(ctx: &Context, game: &mut Game) {
             let mut field_was_clicked = false;
             let mut selected_field: &Field = Field::as_ref();
             let board_clone = game.field.try_lock().unwrap();
-            let board = replicate(&board_clone.content);
+            let board = replicate(&board_clone);
             drop(board_clone);
-            for row in &board {
+            for row in &board.content {
                 ui.horizontal(|ui| {
                     for field in row {
                         match &field.content {

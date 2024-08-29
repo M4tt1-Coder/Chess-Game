@@ -14,9 +14,9 @@ impl Board {
     }
 }
 
-pub fn replicate(board_data: &Vec<Vec<Field>>) -> Vec<Vec<Field>> {
+pub fn replicate(board: &Board) -> Board {
     let mut output_board = empty_board();
-    for row in board_data {
+    for row in &board.content {
         let mut rep_row: Vec<Field> = vec![];
         for field in row {
             let col_field: Field = field.clone_myself();
@@ -24,7 +24,9 @@ pub fn replicate(board_data: &Vec<Vec<Field>>) -> Vec<Vec<Field>> {
         }
         output_board.push(rep_row);
     }
-    output_board
+    Board {
+        content: output_board,
+    }
 }
 
 fn empty_board() -> Vec<Vec<Field>> {

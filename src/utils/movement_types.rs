@@ -1,3 +1,6 @@
+// TODO - Rework the lifetime handling for the functions -> better none
+// consider taking in a Box pointer for the game board
+
 //! There are pieces with their own possible movements
 //!
 //! If you split them up, you get 5 moves:
@@ -7,21 +10,20 @@
 //! 4.) Right
 //! 5.) Diagonal
 
-//using statements
-
 /// Contains the movement-function for the movement patterns.
 pub mod movements {
 
     //constants
     const ADDED_INDEX: u8 = 1;
 
+    //using statements
     use crate::{
         enums::FigureColor,
         structs::{Board, Field},
     };
 
     /// If you want to move up with a pawn for example then it makes sure that you can.
-    /// 
+    ///
     /// A other treatment for knights.
     pub fn up<'a>(
         board: &'a Board,
@@ -47,7 +49,7 @@ pub mod movements {
     }
 
     /// Downward direction for movements.
-    /// 
+    ///
     /// Special handling for a knight!
     pub fn down<'b>(
         board: &'b Board,
@@ -76,7 +78,7 @@ pub mod movements {
     }
 
     /// Checks all possible movements to the left.
-    /// 
+    ///
     /// Special case for a knight!
     pub fn left<'c>(
         board: &'c Board,
@@ -105,7 +107,7 @@ pub mod movements {
     }
 
     /// All moves to the right will be handled here.
-    /// 
+    ///
     /// There's a special case for the move of a knight. -> 'is_knight'
     pub fn right<'d>(
         board: &'d Board,
@@ -134,10 +136,10 @@ pub mod movements {
     }
 
     /// Handles all 4 diagonal move-possiblities.
-    /// 
+    ///
     /// Before the function is called in a movement pattern the boolean arguments 'to_the_right' and 'is_upwards' must be determined
     /// in the calling function.
-    /// 
+    ///
     /// Fails if any arg is empty or invalid.
     pub fn diagonal<'e>(
         board: &'e Board,

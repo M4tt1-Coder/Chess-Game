@@ -1,7 +1,7 @@
 //using statements: ...
 use Chess_Game::utils::ticker::Ticker;
 //import egui
-use eframe::{egui, Error};
+use eframe::egui;
 //import game-App struct
 use Chess_Game::Game;
 
@@ -12,7 +12,7 @@ use Chess_Game::Game;
 /// App-name: ""
 ///
 /// You can check out the documentation here: https://docs.rs/egui/latest/egui/
-fn main() -> Result<(), Error> {
+fn main() -> eframe::Result {
     //create main game instance
     let game = Game::new(/*time_ticker*/);
 
@@ -38,13 +38,15 @@ fn main() -> Result<(), Error> {
         app_settings,
         Box::new(|cc| {
             egui_extras::install_image_loaders(&cc.egui_ctx);
-            Box::new(game)
+            // ! before without the result wrapper
+            Ok(Box::new(game))
         }),
     )
 }
 
+// TODO - Look at what an actor (similar to threads) + what is tcp / ucp?
 //TODO - settings component to set name players or time choice
-//TODO - Implement a controller interface to control the figure movements, selecting a figure -> implement a move struct to save the made moves during the game + for rules checking 
+//TODO - Implement a controller interface to control the figure movements, selecting a figure -> implement a move struct to save the made moves during the game + for rules checking
 //TODO - Add benchmarks & tests to general new functions and methods
 //TODO - Look unwrap was used -> possible errors should always be handled
 //TODO - Add a 'started' - boolean property to the game struct just start when the board fully rendered -> when hovering over a button -> set to true

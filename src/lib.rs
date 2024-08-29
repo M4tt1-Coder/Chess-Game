@@ -86,11 +86,11 @@ impl Game {
 
     pub fn field_not_selected_anymore(&self) {
         let board_clone = self.field.try_lock().unwrap();
-        let board = replicate(&board_clone.content);
+        let board = replicate(&board_clone);
         drop(board_clone);
         let mut x = 0;
         let mut y = 0;
-        for row in &board {
+        for row in &board.content {
             for field in row {
                 if field.selected {
                     x = field.position.0 as usize;
@@ -131,13 +131,13 @@ impl Game {
 
     fn move_figure_to_new_field(&self, previous_field: &Field, new_field: &Field) {
         let board_clone = self.field.try_lock().unwrap();
-        let board = replicate(&board_clone.content);
+        let board = replicate(&board_clone);
         drop(board_clone);
         //determine which field the pre_field resembles to
         //-> take conent and put it in the new field
         let mut figure_content: Option<Figure> = None;
 
-        for row in &board {
+        for row in &board.content {
             for field in row {
                 if field.position == previous_field.position {
                     let piece = &field.content.as_ref().unwrap();

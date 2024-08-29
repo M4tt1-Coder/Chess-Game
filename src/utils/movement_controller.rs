@@ -1,13 +1,16 @@
 //use std::rc::Rc;
 
 //using statements
-use crate::{structs::Field, Game};
+use crate::{
+    structs::{Board, Field},
+    Game,
+};
 
 use super::chess_rules::{can_move_to_new_field, can_player_move_this_pieces};
 
 //constants
 
-pub fn button_interaction(game: &Game, board: &Vec<Vec<Field>>, selected_field: &Field) {
+pub fn button_interaction(game: &Game, board: &Board, selected_field: &Field) {
     //check if a field was selected before if so check if the this field has a piece which can move
     //if this field is in the movement range then move the piece to the position
     if let Some(field) = is_a_field_selected(board) {
@@ -57,12 +60,12 @@ pub fn button_interaction(game: &Game, board: &Vec<Vec<Field>>, selected_field: 
 /// Dedicates if a field is selected on the gameboard
 ///
 /// When there are more fields selected than one the app will panic
-fn is_a_field_selected(board: &Vec<Vec<Field>>) -> Option<&Field> {
+fn is_a_field_selected(board: &Board) -> Option<&Field> {
     let mut selected_counter: u8 = 0;
 
     let mut selected_field: Option<&Field> = None;
 
-    for row in board {
+    for row in &board.content {
         for field in row {
             if field.selected {
                 selected_field = Some(field);
