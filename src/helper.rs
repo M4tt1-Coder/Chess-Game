@@ -19,9 +19,9 @@ const DEFAULT_SELECTED: bool = false;
 //8 x 8 field with default figure posisions
 /// Returns the default field datastructure
 ///
-/// The position property of: (x, y) describes the position of the field within the chess board
-/// x = index of the row
-/// y = index of the column
+/// The position property of: (y, x) describes the position of the field within the chess board
+/// x = index of the column
+/// y = index of the row
 #[inline]
 pub fn default_field() -> Arc<Mutex<Board>> {
     Arc::new(Mutex::new(Board::new(vec![

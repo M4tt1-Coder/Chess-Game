@@ -1,4 +1,3 @@
-// TODO - Rework the lifetime handling for the functions -> better none
 // consider taking in a Box pointer for the game board
 
 //! There are pieces with their own possible movements
@@ -20,6 +19,7 @@ pub mod movements {
     use crate::{
         enums::FigureColor,
         structs::{Board, Field},
+        utils::movement_patterns::is_the_piece_a_knight,
     };
 
     /// If you want to move up with a pawn for example then it makes sure that you can.
@@ -28,7 +28,6 @@ pub mod movements {
     pub fn up<'a>(
         board: &'a Board,
         current_field: &'a Field,
-        is_knight: bool,
         piece_color: &FigureColor,
     ) -> &'a Field {
         if current_field.position.0 == 0 {
@@ -40,7 +39,7 @@ pub mod movements {
         let next_field = get_next_field(board, new_position);
 
         if let Some(figure) = &next_field.content {
-            if &figure.color == piece_color && !is_knight {
+            if &figure.color == piece_color && !is_the_piece_a_knight(figure) {
                 return current_field;
             }
         }
@@ -54,7 +53,7 @@ pub mod movements {
     pub fn down<'b>(
         board: &'b Board,
         current_field: &'b Field,
-        is_knight: bool,
+
         piece_color: &FigureColor,
     ) -> &'b Field {
         if current_field.position.0 == 7 {
@@ -69,7 +68,7 @@ pub mod movements {
         let next_field = get_next_field(board, new_position);
 
         if let Some(figure) = &next_field.content {
-            if &figure.color == piece_color && !is_knight {
+            if &figure.color == piece_color && !is_the_piece_a_knight(figure) {
                 return current_field;
             }
         }
@@ -83,7 +82,6 @@ pub mod movements {
     pub fn left<'c>(
         board: &'c Board,
         current_field: &'c Field,
-        is_knight: bool,
         piece_color: &FigureColor,
     ) -> &'c Field {
         if current_field.position.1 == 0 {
@@ -98,7 +96,7 @@ pub mod movements {
         let next_field = get_next_field(board, new_position);
 
         if let Some(figure) = &next_field.content {
-            if &figure.color == piece_color && !is_knight {
+            if &figure.color == piece_color && !is_the_piece_a_knight(figure) {
                 return current_field;
             }
         }
@@ -112,7 +110,6 @@ pub mod movements {
     pub fn right<'d>(
         board: &'d Board,
         current_field: &'d Field,
-        is_knight: bool,
         piece_color: &FigureColor,
     ) -> &'d Field {
         if current_field.position.1 == 7 {
@@ -127,13 +124,22 @@ pub mod movements {
         let next_field = get_next_field(board, new_position);
 
         if let Some(figure) = &next_field.content {
-            if &figure.color == piece_color && !is_knight {
+            if &figure.color == piece_color && !is_the_piece_a_knight(figure) {
                 return current_field;
             }
         }
 
         next_field
     }
+
+    // TODO - Add 'En Passent' to the logic
+    // Add property 'en_passent_possible' to pawn objects
+    // will be set to true to pawn made two primary steps
+    // next round the app loops trough all pieces and sets all pawns with 'en_passent_possible' true to false
+
+    // first loop through all piece
+    // second set the prop to true of a new pawn
+    // _______
 
     /// Handles all 4 diagonal move-possiblities.
     ///
@@ -204,10 +210,13 @@ pub mod movements {
             }
         }
 
-        if let Some(figure) = &_next_field.content {
-            if &figure.color == piece_color {
-                return current_field;
+        match &_next_field.content {
+            Some(figure) => {
+                if &figure.color == piece_color {
+                    return current_field;
+                };
             }
+            None => return current_field,
         }
 
         _next_field

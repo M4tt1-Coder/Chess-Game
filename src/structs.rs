@@ -62,11 +62,27 @@ impl Player {
 
 #[derive(PartialEq, Debug)]
 pub struct Field {
-    //playing figure in the field when there's one
+    /// playing figure in the field when there's one
     pub content: Option<Figure>,
-    //position on the field -> more used for validation purposes
+    /// position on the field -> more used for validation purposes
+    ///
+    /// index 0 => y && index 1 => x (which represents which ordinate)
+    ///
+    /// O   0 1 2 3 ... (x)
+    ///
+    /// 0
+    ///
+    /// 1
+    ///
+    /// 2
+    ///
+    /// 3
+    ///
+    /// ...
+    ///
+    /// (y)
     pub position: (u8, u8),
-    //when a player pressed a button a the field was 'selected'
+    /// when a player pressed a button a the field was 'selected'
     pub selected: bool,
 }
 

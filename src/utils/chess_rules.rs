@@ -19,9 +19,6 @@ use super::movement_patterns::{MovementPatternExecutor, PawnPatterns};
 
 //constants
 
-// TODO - Add the patterns to the control point
-// TODO - Debug the checking process for the figures
-
 /// The control point where all chess rules are executed
 ///
 /// Returns true when all rules are followed

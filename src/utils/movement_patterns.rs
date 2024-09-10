@@ -21,9 +21,7 @@ pub struct Pattern {
     pub steps: Vec<Box<dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor) -> &'a Field>>,
 }
 
-// TODO - Validate that this implementation of the pawn patterns is valid (as specially the lifetimes)
-
-/// Defines a trait that all piece-pattern-struct must implement.
+/// Defines a trait that all piece-pattern-structs must implement.
 ///
 /// The 'execute_patterns'-function will call all closures of the pattern.
 pub trait MovementPatternExecutor {
@@ -37,7 +35,15 @@ pub trait MovementPatternExecutor {
         selected_field: &Field,
         _piece_color: &FigureColor,
     ) -> bool;
+
+    fn set_up_patterns() -> Self;
 }
+
+// TODO - Debug the checking process for pawns
+
+// _________
+// START : Pawn Implementation
+// _________
 
 /// A pattern represenatative for a pawn.
 ///
@@ -52,8 +58,30 @@ pub struct PawnPatterns {
     pub pawn_patters: Pattern,
 }
 
-impl PawnPatterns {
-    pub fn set_up_patterns() -> PawnPatterns {
+impl MovementPatternExecutor for PawnPatterns {
+    type Pattern = Pattern;
+
+    fn execute_patterns(
+        &self,
+        board: &Board,
+        current_field: &Field,
+        selected_field: &Field,
+        _piece_color: &FigureColor,
+    ) -> bool {
+        let mut leads_to_selected_field = false;
+
+        for pattern in &self.pawn_patters.steps {
+            let last_field = pattern(board, current_field, _piece_color);
+
+            if last_field == selected_field {
+                leads_to_selected_field = true;
+            }
+        }
+
+        leads_to_selected_field
+    }
+
+    fn set_up_patterns() -> PawnPatterns {
         let mut output_patterns: Vec<
             Box<dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor) -> &'a Field>,
         > = Vec::new();
@@ -67,80 +95,67 @@ impl PawnPatterns {
 
                     match piece_color {
                         FigureColor::Black => {
-                            next_field = down(
-                                board,
-                                current_field,
-                                is_the_piece_a_knight(&current_field.content.as_ref().unwrap()),
-                                piece_color,
-                            );
+                            next_field = down(board, current_field, piece_color);
                         }
                         FigureColor::White => {
-                            next_field = up(
-                                board,
-                                current_field,
-                                is_the_piece_a_knight(&current_field.content.as_ref().unwrap()),
-                                piece_color,
-                            );
+                            next_field = up(board, current_field, piece_color);
                         }
                         _ => {
                             println!("Didn't receive a piece color!");
                         } // won't happen just for the case
                     }
 
+                    // when the field where the pawn moves with a straight step
+                    // has a figure it can not move there
+                    if let Some(_) = &next_field.content {
+                        return current_field;
+                    }
+
                     next_field
                 },
             );
-
         // second pattern
         let two_forward: Box<dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor) -> &'a Field> =
             Box::new(
                 move |board: &Board, current_field: &Field, piece_color: &FigureColor| -> &Field {
+                    if current_field.position.0 != 1 && current_field.position.0 != 6 {
+                        return current_field;
+                    }
+
                     let mut next_field = current_field;
 
                     match piece_color {
                         FigureColor::Black => {
                             // first step
-                            next_field = down(
-                                board,
-                                current_field,
-                                is_the_piece_a_knight(&current_field.content.as_ref().unwrap()),
-                                piece_color,
-                            );
+                            next_field = down(board, current_field, piece_color);
                             //check if the piece has moved -> if not then return the current field
                             if next_field.position == current_field.position {
                                 return current_field;
                             }
                             // second step
-                            next_field = down(
-                                board,
-                                current_field,
-                                is_the_piece_a_knight(&current_field.content.as_ref().unwrap()),
-                                piece_color,
-                            );
+                            next_field = down(board, next_field, piece_color);
                         }
                         FigureColor::White => {
                             //first step
-                            next_field = up(
-                                board,
-                                current_field,
-                                is_the_piece_a_knight(&current_field.content.as_ref().unwrap()),
-                                piece_color,
-                            );
+                            next_field = up(board, current_field, piece_color);
                             //check if the piece has moved -> if not then return the current field
+                            // can't pass the current field twice to the step functions
+                            // need to pass the updated field 'next_field' to the step function
                             if next_field.position == current_field.position {
                                 return current_field;
                             }
                             // second step
-                            next_field = up(
-                                board,
-                                current_field,
-                                is_the_piece_a_knight(&current_field.content.as_ref().unwrap()),
-                                piece_color,
-                            );
+                            next_field = up(board, next_field, piece_color);
                         }
                         _ => {
                             println!("Didn't receive a piece color!");
                         } // won't happen just for the case
+                    }
+
+                    // when the field where the pawn moves with a straight step
+                    // has a figure it can not move there
+                    if let Some(_) = &next_field.content {
+                        return current_field;
                     }
 
                     next_field
@@ -204,7 +219,25 @@ impl PawnPatterns {
     }
 }
 
-impl MovementPatternExecutor for PawnPatterns {
+// __________
+// END : Pawn Implementation
+// __________
+
+// TODO - Create rook pattern implementation
+
+// __________
+// START : Rook Implementation
+// __________
+
+/// Execution struct for iterating through the movements of a rook.
+///
+/// Contains a property 'rook_pattern' that holds all patterns.
+pub struct RookPattern {
+    /// List of patterns
+    pub rook_pattern: Pattern,
+}
+
+impl MovementPatternExecutor for RookPattern {
     type Pattern = Pattern;
 
     fn execute_patterns(
@@ -214,21 +247,35 @@ impl MovementPatternExecutor for PawnPatterns {
         selected_field: &Field,
         _piece_color: &FigureColor,
     ) -> bool {
-        let mut leads_to_selected_field = false;
+        todo!()
+    }
 
-        for pattern in &self.pawn_patters.steps {
-            let last_field = pattern(board, current_field, _piece_color);
-
-            if last_field == selected_field {
-                leads_to_selected_field = true;
-            }
-        }
-
-        leads_to_selected_field
+    fn set_up_patterns() -> Self {
+        todo!()
     }
 }
-//private functions
 
-fn is_the_piece_a_knight(piece: &Figure) -> bool {
+// __________
+// END : Rook Implementation
+// __________
+
+// __________
+//private functions
+// __________
+
+/// Takes in the reference to a piece.
+///
+/// Returns whether the type of the piece is a 'knight' or not.
+///
+/// # Examples
+///
+/// ```
+///     let piece = Figure { figure_type: FigureType::Knight, color: FigureColor::White, thrown: false };
+///     if (is_the_piece_a_knight(&piece))
+///     {
+///          /* result is true */   
+///     }
+/// ```
+pub fn is_the_piece_a_knight(piece: &Figure) -> bool {
     piece.figure_type == FigureType::Knight
 }
