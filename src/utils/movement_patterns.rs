@@ -39,8 +39,6 @@ pub trait MovementPatternExecutor {
     fn set_up_patterns() -> Self;
 }
 
-// TODO - Debug the checking process for pawns
-
 // _________
 // START : Pawn Implementation
 // _________
@@ -161,6 +159,7 @@ impl MovementPatternExecutor for PawnPatterns {
                     next_field
                 },
             );
+        // TODO - Implement the 'En Passant' function
         // third pattern
         let throw_left: Box<dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor) -> &'a Field> =
             Box::new(

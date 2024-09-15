@@ -11,6 +11,14 @@ image = { version = "0.25.2", features = ["png", "jpeg"] }
 egui_extras = { version = "0.28.1", features = ["all_loaders"] }
 duration-string = { version = "0.4.0" }
 
+[dependencies.uuid]
+version = "1.10.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
+
 [dev-dependencies]
 divan = "0.1.14"
 

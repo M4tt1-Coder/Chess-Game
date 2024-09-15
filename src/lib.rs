@@ -10,7 +10,7 @@ pub mod utils;
 //using statements
 use eframe::App;
 use helper::default_field;
-use structs::{replicate, Board, Field, Figure, Player};
+use structs::{replicate, Board, Field, Figure, MoveHistory, Player};
 
 use enums::{Environment, FigureColor, FigureType, PlayMode, Winner};
 
@@ -31,28 +31,28 @@ const SAVE_INTERVAL: u64 = 10;
 pub const FIELD_SIZE: f32 = 55.;
 
 //#[derive(Debug, PartialEq)]
+/// Global game instance, holding all important information.
 pub struct Game {
     //pub ticker: Ticker,
-    /// field
+    /// Game board with 8 x 8 fields (64)
     pub field: Arc<Mutex<Board>>,
-    /// winner
+    /// The player, who won the game.
     pub winner: Winner,
-    /// play mode
+    /// Determines which playmode has been chosen by the user.
     pub playmode: PlayMode,
-    /// prop player one
+    /// Representing player one
     pub player_one: Arc<Mutex<Player>>,
-    /// prop player two
+    /// Representing player two
     pub player_two: Arc<Mutex<Player>>,
-    /// move
-    pub _move: u16,
-    /// round
+    /// Information about what round we are in
     pub round: u8,
     /// score of players
     pub score: Vec<u8>,
     /// those figure who were thrown out -> to display it in the dashboard
     pub thrown_figures: Vec<Figure>,
-    /// environment -> default is local environment for development
+    /// environment -> default is local environment for development (?)
     pub environment: Environment,
+    pub moves_history: MoveHistory,
 }
 
 impl Game {
@@ -66,10 +66,10 @@ impl Game {
             player_one: Arc::new(Mutex::new(Player::new(PLAYER_ONE_NUMBER, 1))),
             player_two: Arc::new(Mutex::new(Player::new(PLAYER_TWO_NUMBER, 1))),
             score: vec![0, 0],
-            _move: 0,
             round: 0,
             thrown_figures: vec![],
             environment: Environment::Local,
+            moves_history: MoveHistory::new(),
         }
     }
     //set game to default state when starting a new game
@@ -80,7 +80,6 @@ impl Game {
         self.player_one = Arc::new(Mutex::new(Player::new(PLAYER_ONE_NUMBER, self.round)));
         self.player_two = Arc::new(Mutex::new(Player::new(PLAYER_TWO_NUMBER, self.round)));
         self.score = vec![0, 0];
-        self._move = 0;
         self.round += 1;
     }
 

@@ -28,74 +28,42 @@ pub fn default_field() -> Arc<Mutex<Board>> {
         //first row out of whites view
         vec![
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Rook,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Rook, FigureColor::Black)),
                 position: (0, 0),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Knight,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Knight, FigureColor::Black)),
                 position: (0, 1),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Bishop,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Bishop, FigureColor::Black)),
                 position: (0, 2),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::King,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::King, FigureColor::Black)),
                 position: (0, 3),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Queen,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Queen, FigureColor::Black)),
                 position: (0, 4),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Bishop,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Bishop, FigureColor::Black)),
                 position: (0, 5),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Knight,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Knight, FigureColor::Black)),
                 position: (0, 6),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Rook,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Rook, FigureColor::Black)),
                 position: (0, 7),
                 selected: DEFAULT_SELECTED,
             },
@@ -103,74 +71,42 @@ pub fn default_field() -> Arc<Mutex<Board>> {
         //row 2
         vec![
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::Black)),
                 position: (1, 0),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::Black)),
                 position: (1, 1),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::Black)),
                 position: (1, 2),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::Black)),
                 position: (1, 3),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::Black)),
                 position: (1, 4),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::Black)),
                 position: (1, 5),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::Black)),
                 position: (1, 6),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::Black,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::Black)),
                 position: (1, 7),
                 selected: DEFAULT_SELECTED,
             },
@@ -350,74 +286,42 @@ pub fn default_field() -> Arc<Mutex<Board>> {
         //row 7
         vec![
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::White)),
                 position: (6, 0),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::White)),
                 position: (6, 1),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::White)),
                 position: (6, 2),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::White)),
                 position: (6, 3),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::White)),
                 position: (6, 4),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::White)),
                 position: (6, 5),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::White)),
                 position: (6, 6),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Pawn,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Pawn, FigureColor::White)),
                 position: (6, 7),
                 selected: DEFAULT_SELECTED,
             },
@@ -425,74 +329,42 @@ pub fn default_field() -> Arc<Mutex<Board>> {
         //row 8
         vec![
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Rook,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Rook, FigureColor::White)),
                 position: (7, 0),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Knight,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Knight, FigureColor::White)),
                 position: (7, 1),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Bishop,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Bishop, FigureColor::White)),
                 position: (7, 2),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::King,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::King, FigureColor::White)),
                 position: (7, 3),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Queen,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Queen, FigureColor::White)),
                 position: (7, 4),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Bishop,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Bishop, FigureColor::White)),
                 position: (7, 5),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Knight,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Knight, FigureColor::White)),
                 position: (7, 6),
                 selected: DEFAULT_SELECTED,
             },
             Field {
-                content: Some(Figure {
-                    figure_type: FigureType::Rook,
-                    thrown: false,
-                    color: FigureColor::White,
-                }),
+                content: Some(Figure::new(FigureType::Rook, FigureColor::White)),
                 position: (7, 7),
                 selected: DEFAULT_SELECTED,
             },

@@ -132,7 +132,6 @@ pub mod movements {
         next_field
     }
 
-    // TODO - Add 'En Passent' to the logic
     // Add property 'en_passent_possible' to pawn objects
     // will be set to true to pawn made two primary steps
     // next round the app loops trough all pieces and sets all pawns with 'en_passent_possible' true to false

@@ -8,8 +8,8 @@ use crate::{
         get_field_color_on_coordinates, get_figure_path, horizontal_seperator,
         render_player_dashboard_info, render_thrown_pieces,
     },
-    structs::{replicate, Field},
-    utils::movement_controller::button_interaction,
+    structs::{replicate, Board, Field, Move},
+    utils::movement_controller::begin_rule_checking,
     Game, FIELD_SIZE,
 };
 
@@ -67,7 +67,7 @@ pub fn render_chess_board(ctx: &Context, game: &mut Game) {
             let mut field_was_clicked = false;
             let mut selected_field: &Field = Field::as_ref();
             let board_clone = game.field.try_lock().unwrap();
-            let board = replicate(&board_clone);
+            let board: Board = replicate(&board_clone);
             drop(board_clone);
             for row in &board.content {
                 ui.horizontal(|ui| {
@@ -111,13 +111,6 @@ pub fn render_chess_board(ctx: &Context, game: &mut Game) {
                                     field_was_clicked = true;
                                     selected_field = field;
                                 }
-                                // ui.add_sized(
-                                //     [FIELD_SIZE, FIELD_SIZE],
-                                //     Button::new("").fill(get_field_color_on_coordinates(
-                                //         field.position.0,
-                                //         field.position.1,
-                                //     )),
-                                // );
                             }
                         }
                     }
@@ -125,8 +118,29 @@ pub fn render_chess_board(ctx: &Context, game: &mut Game) {
 
                 ui.add_space(8.);
             }
+            // Execute actions when a field was clicked
             if field_was_clicked {
-                button_interaction(game, &board, selected_field);
+                // 1.) Call the rule checker endpoints to check if the user made a valid move with a piece
+                // 2.) Get data back from the checker that is used to store important documentation for future checking
+                // 'previous_field_data' = data from the previous field that was pressed by the user
+                let (is_there_new_move_entry, previous_field_data) =
+                    begin_rule_checking(game, &board, &selected_field);
+                // if the user made a valid move then proceed
+                if is_there_new_move_entry {
+                    // make sure the needed data is available
+                    // when a field was selected before then we get its data returned from the checker
+                    // field_data.0 = position coordinates of the field where the piece stands
+                    // field_data.1 = the ID of the piece on that field 
+                    match previous_field_data {
+                        Some(field_data) => game.moves_history.add_move(Move {
+                            piece_id: field_data.1,
+                            from: field_data.0,
+                            to: selected_field.position,
+                            number: game.moves_history.get_current_number_of_moves() + 1 
+                        }),
+                        None => panic!("New move entry for move history regonized BUT received an empty field object!"),
+                    }
+                }
             }
         });
     });
