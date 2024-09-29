@@ -35,7 +35,7 @@ pub fn begin_rule_checking(
             // return the right data in the case when the user made a valid move
             let mut has_user_moved_piece = false;
             //check if the piece can move to this new selected field
-            if can_move_to_new_field(board, field, selected_field)//check if the planned piece is valid
+            if can_move_to_new_field(board, field, selected_field, &game.moves_history)//check if the planned piece is valid
                 && can_player_move_this_pieces(game, &field.content.as_ref().unwrap().color)
             //depending on the players piece color and the selected figure's color -> allow the move or not
             {

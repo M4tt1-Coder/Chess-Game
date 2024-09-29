@@ -11,7 +11,7 @@
 
 use crate::{
     enums::{FigureColor, FigureType},
-    structs::{Board, Field},
+    structs::{Board, Field, MoveHistory},
     Game,
 };
 
@@ -22,15 +22,25 @@ use super::movement_patterns::{MovementPatternExecutor, PawnPatterns};
 /// The control point where all chess rules are executed
 ///
 /// Returns true when all rules are followed
-pub fn can_move_to_new_field(board: &Board, previous_field: &Field, new_field: &Field) -> bool {
+pub fn can_move_to_new_field(
+    board: &Board,
+    previous_field: &Field,
+    new_field: &Field,
+    move_history: &MoveHistory,
+) -> bool {
     match &previous_field.content {
         Some(figure) => match figure.figure_type {
             FigureType::Pawn => {
                 // setup patterns
                 let pawn_patterns = PawnPatterns::set_up_patterns();
                 // execute patterns
-                let execution_result =
-                    pawn_patterns.execute_patterns(board, previous_field, new_field, &figure.color);
+                let execution_result = pawn_patterns.execute_patterns(
+                    board,
+                    previous_field,
+                    new_field,
+                    move_history,
+                    &figure.color,
+                );
                 // return result
                 return execution_result;
             }

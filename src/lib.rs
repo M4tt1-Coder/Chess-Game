@@ -81,6 +81,7 @@ impl Game {
         self.player_two = Arc::new(Mutex::new(Player::new(PLAYER_TWO_NUMBER, self.round)));
         self.score = vec![0, 0];
         self.round += 1;
+        self.moves_history = MoveHistory::new();
     }
 
     pub fn field_not_selected_anymore(&self) {

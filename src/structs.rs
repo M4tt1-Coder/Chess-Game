@@ -222,13 +222,20 @@ impl Move {
 /// Ends when the game is over.
 pub struct MoveHistory {
     /// All moves made in one game
-    moves: Vec<Move>,
+    pub moves: Vec<Move>,
     /// Number of the moves made in a game till now.
-    number_of_moves: u16,
+    pub number_of_moves: u16,
 }
 
 // Implementation of the MoveHistory struct
 impl<'a> MoveHistory {
+    /// Returns a pointer to the last item in the history.
+    ///
+    /// Fails when the history is empty.
+    pub fn get_last_item(&self) -> &Move {
+        &self.moves[self.moves.len() - 1]
+    }
+
     /// Create a default move-history instance.
     ///
     /// Start number of moves is 0.
@@ -260,6 +267,9 @@ impl<'a> MoveHistory {
         &self.moves[index_of_move]
     }
 
+    /// Returns the number of moves currently stored in the list.
+    ///
+    /// Fails when the list is empty.
     pub fn get_current_number_of_moves(&self) -> u16 {
         return self.moves.len() as u16;
     }

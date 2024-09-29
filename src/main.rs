@@ -44,7 +44,7 @@ fn main() -> eframe::Result {
     )
 }
 
-// TODO - what is tcp / ucp? && look more at actor model tokio?
+// TODO - Add functionality to rotate the board -> adjust the rule logic
 // TODO - settings component to set name players or time choice
 // TODO - Add benchmarks & tests to general new functions and methods
 // TODO - Look unwrap was used -> possible errors should always be handled
