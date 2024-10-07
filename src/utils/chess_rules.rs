@@ -42,7 +42,7 @@ pub fn can_move_to_new_field(
                     &figure.color,
                 );
                 // return result
-                return execution_result;
+                execution_result
             }
             FigureType::Rook => todo!(),
             FigureType::Bishop => todo!(),
@@ -69,10 +69,8 @@ pub fn can_player_move_this_pieces(game: &Game, piece_color: &FigureColor) -> bo
         if &player_one.figure_color == piece_color {
             output = true;
         }
-    } else {
-        if &player_two.figure_color == piece_color {
-            output = true;
-        }
+    } else if &player_two.figure_color == piece_color {
+        output = true;
     }
 
     drop(player_one);

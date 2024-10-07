@@ -9,7 +9,7 @@ use Chess_Game::Game;
 ///
 /// Sets main app window settings
 ///
-/// App-name: ""
+/// App-name: "Chess"
 ///
 /// You can check out the documentation here: https://docs.rs/egui/latest/egui/
 fn main() -> eframe::Result {
@@ -28,7 +28,6 @@ fn main() -> eframe::Result {
             .with_min_inner_size([800., 650.])
             .with_max_inner_size([1400., 1138.]),
         //icon_data: egui::Icon... -> add
-        default_theme: eframe::Theme::Dark,
         ..eframe::NativeOptions::default()
     };
 

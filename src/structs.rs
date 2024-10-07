@@ -99,13 +99,29 @@ pub struct Figure {
     pub id: Uuid,
 }
 
+/// Implementation of the figure struct
 impl Figure {
-    pub fn new(figure_type: FigureType, figure_color: FigureColor) -> Figure {
-        Figure {
-            figure_type,
-            thrown: false,
-            color: figure_color,
-            id: Uuid::new_v4(),
+    /// Returns a copy of the figure for short scope.
+    ///
+    /// The object will not long live.
+    pub fn new(
+        figure_type: FigureType,
+        figure_color: FigureColor,
+        figure_id: Option<Uuid>,
+    ) -> Figure {
+        match figure_id {
+            Some(id) => Figure {
+                figure_type,
+                thrown: false,
+                color: figure_color,
+                id,
+            },
+            None => Figure {
+                figure_type,
+                thrown: false,
+                color: figure_color,
+                id: Uuid::new_v4(),
+            },
         }
     }
 }
@@ -157,7 +173,7 @@ impl Field {
                     FigureColor::Black => FigureColor::Black,
                     _ => FigureColor::NotFound,
                 };
-                Some(Figure::new(figure_type, figure_color))
+                Some(Figure::new(figure_type, figure_color, Some(piece.id)))
             }
             None => None,
         };
@@ -228,7 +244,7 @@ pub struct MoveHistory {
 }
 
 // Implementation of the MoveHistory struct
-impl<'a> MoveHistory {
+impl MoveHistory {
     /// Returns a pointer to the last item in the history.
     ///
     /// Fails when the history is empty.
@@ -271,6 +287,18 @@ impl<'a> MoveHistory {
     ///
     /// Fails when the list is empty.
     pub fn get_current_number_of_moves(&self) -> u16 {
-        return self.moves.len() as u16;
+        self.moves.len() as u16
     }
+}
+
+// Data Transfer Objects
+
+/// Represents the result of the rule checking of one iteration.
+///
+/// Contains necessary information.
+pub struct CheckingResults {
+    /// Indicates whether a valid move was made by the player or not.
+    pub is_there_new_move_entry: bool,
+    /// Data of the piece (position, piece id)
+    pub data_of_piece: Option<((u8, u8), Uuid)>,
 }

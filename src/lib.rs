@@ -140,7 +140,7 @@ impl Game {
         for row in &board.content {
             for field in row {
                 if field.position == previous_field.position {
-                    let piece = &field.content.as_ref().unwrap();
+                    let piece = field.content.as_ref().unwrap();
                     let figure_type = match piece.figure_type {
                         FigureType::Queen => FigureType::Queen,
                         FigureType::Bishop => FigureType::Bishop,
@@ -156,7 +156,7 @@ impl Game {
                     };
                     self.delete_field_content(field.position.0 as usize, field.position.1 as usize);
 
-                    figure_content = Some(Figure::new(figure_type, figure_color));
+                    figure_content = Some(Figure::new(figure_type, figure_color, Some(piece.id)));
                 }
             }
         }

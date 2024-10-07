@@ -211,8 +211,8 @@ pub mod movements {
                 }
 
                 let new_position = (
-                    current_field.position.0 - ADDED_INDEX,
-                    current_field.position.1 + ADDED_INDEX,
+                    current_field.position.0 + ADDED_INDEX,
+                    current_field.position.1 - ADDED_INDEX,
                 );
 
                 _next_field = get_next_field(board, new_position);
@@ -269,9 +269,7 @@ pub mod movements {
 
 // special move / throws checking
 
-// TODO - functionality not fully implemented yet -> debug + test to make it work
 // TODO - Remove the pawn that was thrown with the en-passant
-
 /// Checks whether the pawn can throw another pawn of the opposite color.
 ///
 /// ```
@@ -304,7 +302,7 @@ fn is_en_passant_possible(
         None => return false,
     }
     // check if the pawn is on a necessary board row -> index of 4th and 5th row
-    if current_field.position.0 != 3 || current_field.position.0 != 4 {
+    if current_field.position.0 != 3 && current_field.position.0 != 4 {
         return false;
     }
     // check if the current pawn is on the right valid row depending on which side his pieces are
@@ -334,7 +332,10 @@ fn is_en_passant_possible(
         }
         // determine wether the pawn has moved two fields or not
         // if not return false
-        let step_cound_of_pawn = last_move_in_history.to.0 - last_move_in_history.from.0;
+        let step_cound_of_pawn = last_move_in_history
+            .to
+            .0
+            .abs_diff(last_move_in_history.from.0);
         if step_cound_of_pawn != 2 {
             return false;
         }
@@ -362,10 +363,8 @@ fn check_if_pawn_is_on_next_field(
     if checking_on_right {
         match &board.content[pawn_position.0][pawn_position.1 + 1].content {
             Some(figure) => {
-                if figure.figure_type == FigureType::Pawn {
-                    if &figure.color != pawn_color {
-                        return (true, figure.id);
-                    }
+                if figure.figure_type == FigureType::Pawn && &figure.color != pawn_color {
+                    return (true, figure.id);
                 }
             }
             None => return (false, Uuid::new_v4()),
@@ -374,10 +373,8 @@ fn check_if_pawn_is_on_next_field(
         // check on the left
         match &board.content[pawn_position.0][pawn_position.1 - 1].content {
             Some(figure) => {
-                if figure.figure_type == FigureType::Pawn {
-                    if &figure.color == pawn_color {
-                        return (true, figure.id);
-                    }
+                if figure.figure_type == FigureType::Pawn && &figure.color != pawn_color {
+                    return (true, figure.id);
                 }
             }
             None => return (false, Uuid::new_v4()),
@@ -400,11 +397,11 @@ fn pawn_situated_on_right_field(
         match pawn_color {
             FigureColor::Black => match row_index {
                 3 => true,
-                _ => return false,
+                _ => false,
             },
             FigureColor::White => match row_index {
                 4 => true,
-                _ => return false,
+                _ => false,
             },
             FigureColor::NotFound => {
                 println!("A wrong enum was found! Exiting!");
@@ -416,11 +413,11 @@ fn pawn_situated_on_right_field(
         match pawn_color {
             FigureColor::Black => match row_index {
                 4 => true,
-                _ => return false,
+                _ => false,
             },
             FigureColor::White => match row_index {
                 3 => true,
-                _ => return false,
+                _ => false,
             },
             FigureColor::NotFound => {
                 println!("A wrong enum was found! Exiting!");

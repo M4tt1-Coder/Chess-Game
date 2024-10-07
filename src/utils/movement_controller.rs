@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 //using statements
 use crate::{
-    structs::{Board, Field},
+    structs::{Board, CheckingResults, Field},
     Game,
 };
 
@@ -27,7 +27,7 @@ pub fn begin_rule_checking(
     selected_field: &Field,
     // boolean determines whether a new POSSIBLE move was made by the user
     //
-) -> (bool, Option<((u8, u8), Uuid)>) {
+) -> CheckingResults {
     //check if a field was selected before if so check if the this field has a piece which can move
     //if this field is in the movement range then move the piece to the position
     if let Some(field) = is_a_field_selected(board) {
@@ -39,6 +39,8 @@ pub fn begin_rule_checking(
                 && can_player_move_this_pieces(game, &field.content.as_ref().unwrap().color)
             //depending on the players piece color and the selected figure's color -> allow the move or not
             {
+                // TODO - Player turns should not change when the player clicks two times on a field with a piece
+
                 game.move_figure_to_new_field(field, selected_field);
                 game.next_players_turn();
                 has_user_moved_piece = true;
@@ -47,12 +49,21 @@ pub fn begin_rule_checking(
             game.field_not_selected_anymore();
             //
             if has_user_moved_piece {
-                (
-                    true,
-                    Some((field.position, field.content.as_ref().unwrap().id)),
-                )
+                CheckingResults {
+                    is_there_new_move_entry: true,
+                    data_of_piece: Some((
+                        field.position,
+                        match field.content.as_ref() {
+                            Some(figure) => figure.id,
+                            None => Uuid::new_v4(),
+                        },
+                    )),
+                }
             } else {
-                (false, None)
+                CheckingResults {
+                    is_there_new_move_entry: false,
+                    data_of_piece: None,
+                }
             }
         } else {
             //first make sure no field is selected
@@ -65,7 +76,10 @@ pub fn begin_rule_checking(
                 selected_field.position.1 as usize,
             );
 
-            (false, None)
+            CheckingResults {
+                is_there_new_move_entry: false,
+                data_of_piece: None,
+            }
         }
     } else {
         game.select_field(
@@ -73,7 +87,10 @@ pub fn begin_rule_checking(
             selected_field.position.1 as usize,
         );
         //select_field(selected_field);
-        (false, None)
+        CheckingResults {
+            is_there_new_move_entry: false,
+            data_of_piece: None,
+        }
     }
 }
 

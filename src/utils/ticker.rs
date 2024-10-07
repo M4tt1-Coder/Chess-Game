@@ -14,9 +14,13 @@ use crate::Game;
 //constants
 const TICKER_DURATION: Duration = Duration::new(1, 0);
 
+/// Represents the time ticker instance as a separate thread.
 ///
+/// Contains a Receiver and Join Handle for communication and killing the thread.
 pub struct Ticker {
+    /// Receives a boolean value on the main thread.
     pub receiver: Receiver<bool>,
+    /// In a an emergency, it kills the 'ticker' - thread.
     pub handle: JoinHandle<bool>,
 }
 

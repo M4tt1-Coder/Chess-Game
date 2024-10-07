@@ -123,20 +123,19 @@ pub fn render_chess_board(ctx: &Context, game: &mut Game) {
                 // 1.) Call the rule checker endpoints to check if the user made a valid move with a piece
                 // 2.) Get data back from the checker that is used to store important documentation for future checking
                 // 'previous_field_data' = data from the previous field that was pressed by the user
-                let (is_there_new_move_entry, previous_field_data) =
-                    begin_rule_checking(game, &board, &selected_field);
+                let checking_results = begin_rule_checking(game, &board, selected_field);
                 // if the user made a valid move then proceed
-                if is_there_new_move_entry {
+                if checking_results.is_there_new_move_entry {
                     // make sure the needed data is available
                     // when a field was selected before then we get its data returned from the checker
-                    // field_data.0 = position coordinates of the field where the piece stands
-                    // field_data.1 = the ID of the piece on that field 
-                    match previous_field_data {
-                        Some(field_data) => game.moves_history.add_move(Move {
-                            piece_id: field_data.1,
-                            from: field_data.0,
+                    // piece_data.0 = position coordinates of the field where the piece stands
+                    // piece_data.1 = the ID of the piece on that field
+                    match checking_results.data_of_piece{
+                        Some(piece_data) => game.moves_history.add_move(Move {
+                            piece_id: piece_data.1,
+                            from: piece_data.0,
                             to: selected_field.position,
-                            number: game.moves_history.get_current_number_of_moves() + 1 
+                            number: game.moves_history.get_current_number_of_moves() + 1
                         }),
                         None => panic!("New move entry for move history regonized BUT received an empty field object!"),
                     }

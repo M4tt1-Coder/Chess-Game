@@ -114,7 +114,7 @@ impl MovementPatternExecutor for PawnPatterns {
 
                 // when the field where the pawn moves with a straight step
                 // has a figure it can not move there
-                if let Some(_) = &next_field.content {
+                if next_field.content.is_some() {
                     return current_field;
                 }
 
@@ -166,7 +166,7 @@ impl MovementPatternExecutor for PawnPatterns {
 
                 // when the field where the pawn moves with a straight step
                 // has a figure it can not move there
-                if let Some(_) = &next_field.content {
+                if next_field.content.is_some() {
                     return current_field;
                 }
 
