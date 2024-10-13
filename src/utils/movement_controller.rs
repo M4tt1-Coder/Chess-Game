@@ -35,7 +35,10 @@ pub fn begin_rule_checking(
             // return the right data in the case when the user made a valid move
             let mut has_user_moved_piece = false;
             //check if the piece can move to this new selected field
-            if can_move_to_new_field(board, field, selected_field, &game.moves_history)//check if the planned piece is valid
+            let move_checking_result =
+                can_move_to_new_field(board, field, selected_field, &game.moves_history);
+            //check if the planned piece is valid
+            if move_checking_result.0
                 && can_player_move_this_pieces(game, &field.content.as_ref().unwrap().color)
             //depending on the players piece color and the selected figure's color -> allow the move or not
             {
@@ -58,11 +61,13 @@ pub fn begin_rule_checking(
                             None => Uuid::new_v4(),
                         },
                     )),
+                    coordinates_of_piece_thrown_by_special_move: move_checking_result.1,
                 }
             } else {
                 CheckingResults {
                     is_there_new_move_entry: false,
                     data_of_piece: None,
+                    coordinates_of_piece_thrown_by_special_move: None,
                 }
             }
         } else {
@@ -72,24 +77,26 @@ pub fn begin_rule_checking(
             //than select a new field
 
             game.select_field(
-                selected_field.position.0 as usize,
                 selected_field.position.1 as usize,
+                selected_field.position.0 as usize,
             );
 
             CheckingResults {
                 is_there_new_move_entry: false,
                 data_of_piece: None,
+                coordinates_of_piece_thrown_by_special_move: None,
             }
         }
     } else {
         game.select_field(
-            selected_field.position.0 as usize,
             selected_field.position.1 as usize,
+            selected_field.position.0 as usize,
         );
         //select_field(selected_field);
         CheckingResults {
             is_there_new_move_entry: false,
             data_of_piece: None,
+            coordinates_of_piece_thrown_by_special_move: None,
         }
     }
 }

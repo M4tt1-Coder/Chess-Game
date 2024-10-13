@@ -17,7 +17,14 @@ use super::movement_types::movements::{diagonal, down, up};
 /// Inside the closures will be a continues calling of the movement-patterns.
 pub struct Pattern {
     pub steps: Vec<
-        Box<dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor, &'a MoveHistory) -> &'a Field>,
+        Box<
+            dyn for<'a> Fn(
+                &'a Board,
+                &'a Field,
+                &'a FigureColor,
+                &'a MoveHistory,
+            ) -> (&'a Field, Option<(usize, usize)>),
+        >,
     >,
 }
 
@@ -35,7 +42,7 @@ pub trait MovementPatternExecutor {
         selected_field: &Field,
         move_history: &MoveHistory,
         _piece_color: &FigureColor,
-    ) -> bool;
+    ) -> (bool, Option<(usize, usize)>);
 
     fn set_up_patterns() -> Self;
 }
@@ -67,36 +74,53 @@ impl MovementPatternExecutor for PawnPatterns {
         selected_field: &Field,
         move_history: &MoveHistory,
         _piece_color: &FigureColor,
-    ) -> bool {
+    ) -> (bool, Option<(usize, usize)>) {
+        // define all local representative variables
         let mut leads_to_selected_field = false;
-
+        let mut position_of_thrown_piece = None;
+        // execute all patterns
         for pattern in &self.pawn_patters.steps {
-            let last_field = pattern(board, current_field, _piece_color, move_history);
-
+            // get result data from pattern execution
+            let (last_field, position_of_thrown_piece_result) =
+                pattern(board, current_field, _piece_color, move_history);
+            // when the move was valid assing the data
             if last_field == selected_field {
+                position_of_thrown_piece = position_of_thrown_piece_result;
                 leads_to_selected_field = true;
             }
         }
 
-        leads_to_selected_field
+        (leads_to_selected_field, position_of_thrown_piece)
     }
 
     fn set_up_patterns() -> PawnPatterns {
         let mut output_patterns: Vec<
             Box<
-                dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor, &'a MoveHistory) -> &'a Field,
+                dyn for<'a> Fn(
+                    &'a Board,
+                    &'a Field,
+                    &'a FigureColor,
+                    &'a MoveHistory,
+                ) -> (&'a Field, Option<(usize, usize)>),
             >,
         > = Vec::new();
 
+        // TODO - a pawn changes into a different piece when it reaches the end of the board -> implement this rule
+
         // first pattern
         let one_forward: Box<
-            dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor, &'a MoveHistory) -> &'a Field,
+            dyn for<'a> Fn(
+                &'a Board,
+                &'a Field,
+                &'a FigureColor,
+                &'a MoveHistory,
+            ) -> (&'a Field, Option<(usize, usize)>),
         > = Box::new(
             move |board: &Board,
                   current_field: &Field,
                   piece_color: &FigureColor,
                   _: &MoveHistory|
-                  -> &Field {
+                  -> (&Field, Option<(usize, usize)>) {
                 // have to determine if the player moves his piece up or down on the board
                 let mut next_field = current_field;
 
@@ -115,23 +139,28 @@ impl MovementPatternExecutor for PawnPatterns {
                 // when the field where the pawn moves with a straight step
                 // has a figure it can not move there
                 if next_field.content.is_some() {
-                    return current_field;
+                    return (current_field, None);
                 }
 
-                next_field
+                (next_field, None)
             },
         );
         // second pattern
         let two_forward: Box<
-            dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor, &'a MoveHistory) -> &'a Field,
+            dyn for<'a> Fn(
+                &'a Board,
+                &'a Field,
+                &'a FigureColor,
+                &'a MoveHistory,
+            ) -> (&'a Field, Option<(usize, usize)>),
         > = Box::new(
             move |board: &Board,
                   current_field: &Field,
                   piece_color: &FigureColor,
                   _: &MoveHistory|
-                  -> &Field {
+                  -> (&Field, Option<(usize, usize)>) {
                 if current_field.position.0 != 1 && current_field.position.0 != 6 {
-                    return current_field;
+                    return (current_field, None);
                 }
 
                 let mut next_field = current_field;
@@ -142,7 +171,7 @@ impl MovementPatternExecutor for PawnPatterns {
                         next_field = down(board, current_field, piece_color);
                         //check if the piece has moved -> if not then return the current field
                         if next_field.position == current_field.position {
-                            return current_field;
+                            return (current_field, None);
                         }
                         // second step
                         next_field = down(board, next_field, piece_color);
@@ -154,7 +183,7 @@ impl MovementPatternExecutor for PawnPatterns {
                         // can't pass the current field twice to the step functions
                         // need to pass the updated field 'next_field' to the step function
                         if next_field.position == current_field.position {
-                            return current_field;
+                            return (current_field, None);
                         }
                         // second step
                         next_field = up(board, next_field, piece_color);
@@ -167,29 +196,35 @@ impl MovementPatternExecutor for PawnPatterns {
                 // when the field where the pawn moves with a straight step
                 // has a figure it can not move there
                 if next_field.content.is_some() {
-                    return current_field;
+                    return (current_field, None);
                 }
 
-                next_field
+                (next_field, None)
             },
         );
         // third pattern
         let throw_left: Box<
-            dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor, &'a MoveHistory) -> &'a Field,
+            dyn for<'a> Fn(
+                &'a Board,
+                &'a Field,
+                &'a FigureColor,
+                &'a MoveHistory,
+            ) -> (&'a Field, Option<(usize, usize)>),
         > = Box::new(
             move |board: &Board,
                   current_field: &Field,
                   piece_color: &FigureColor,
                   move_history: &MoveHistory|
-                  -> &Field {
+                  -> (&Field, Option<(usize, usize)>) {
                 let mut next_field = current_field;
+                let mut position_of_piece_thrown = None;
                 // determine if there is a pawn that previouly moved two steps forward
                 // then it can be thrown
                 // let mut en_passant_possible = false;
 
                 match piece_color {
                     FigureColor::Black => {
-                        next_field = diagonal(
+                        (next_field, position_of_piece_thrown) = diagonal(
                             board,
                             current_field,
                             false,
@@ -199,7 +234,7 @@ impl MovementPatternExecutor for PawnPatterns {
                         );
                     }
                     FigureColor::White => {
-                        next_field = diagonal(
+                        (next_field, position_of_piece_thrown) = diagonal(
                             board,
                             current_field,
                             true,
@@ -213,23 +248,29 @@ impl MovementPatternExecutor for PawnPatterns {
                     }
                 }
 
-                next_field
+                (next_field, position_of_piece_thrown)
             },
         );
         //fourth pattern
         let throw_right: Box<
-            dyn for<'a> Fn(&'a Board, &'a Field, &'a FigureColor, &'a MoveHistory) -> &'a Field,
+            dyn for<'a> Fn(
+                &'a Board,
+                &'a Field,
+                &'a FigureColor,
+                &'a MoveHistory,
+            ) -> (&'a Field, Option<(usize, usize)>),
         > = Box::new(
             move |board: &Board,
                   current_field: &Field,
                   piece_color: &FigureColor,
                   move_history: &MoveHistory|
-                  -> &Field {
+                  -> (&Field, Option<(usize, usize)>) {
                 let mut next_field = Field::as_ref();
+                let mut position_of_piece_thrown = None;
 
                 match piece_color {
                     FigureColor::Black => {
-                        next_field = diagonal(
+                        (next_field, position_of_piece_thrown) = diagonal(
                             board,
                             current_field,
                             false,
@@ -239,7 +280,7 @@ impl MovementPatternExecutor for PawnPatterns {
                         );
                     }
                     FigureColor::White => {
-                        next_field = diagonal(
+                        (next_field, position_of_piece_thrown) = diagonal(
                             board,
                             current_field,
                             true,
@@ -253,7 +294,7 @@ impl MovementPatternExecutor for PawnPatterns {
                     }
                 }
 
-                next_field
+                (next_field, position_of_piece_thrown)
             },
         );
 
@@ -300,7 +341,7 @@ impl MovementPatternExecutor for RookPattern {
         selected_field: &Field,
         move_history: &MoveHistory,
         _piece_color: &FigureColor,
-    ) -> bool {
+    ) -> (bool, Option<(usize, usize)>) {
         todo!()
     }
 

@@ -27,7 +27,7 @@ pub fn can_move_to_new_field(
     previous_field: &Field,
     new_field: &Field,
     move_history: &MoveHistory,
-) -> bool {
+) -> (bool, Option<(usize, usize)>) {
     match &previous_field.content {
         Some(figure) => match figure.figure_type {
             FigureType::Pawn => {
@@ -50,7 +50,7 @@ pub fn can_move_to_new_field(
             FigureType::Queen => todo!(),
             FigureType::King => todo!(),
         },
-        None => false,
+        None => (false, None),
     }
 }
 

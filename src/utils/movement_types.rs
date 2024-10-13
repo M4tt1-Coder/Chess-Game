@@ -162,14 +162,14 @@ pub mod movements {
         to_the_right: bool,
         piece_color: &FigureColor,
         move_history: Option<&MoveHistory>,
-    ) -> &'e Field {
+    ) -> (&'e Field, Option<(usize, usize)>) {
         let mut _next_field = Field::as_ref();
 
         if is_upwards {
             // case up-right
             if to_the_right {
                 if current_field.position.0 == 0 || current_field.position.1 == 7 {
-                    return current_field;
+                    return (current_field, None);
                 }
 
                 let new_position = (
@@ -181,7 +181,7 @@ pub mod movements {
             } else {
                 // case up-left
                 if current_field.position.0 == 0 || current_field.position.1 == 0 {
-                    return current_field;
+                    return (current_field, None);
                 }
 
                 let new_position = (
@@ -194,8 +194,8 @@ pub mod movements {
         } else {
             // case down-right
             if to_the_right {
-                if current_field.position.0 == 7 || current_field.position.1 == 7 {
-                    return current_field;
+                if current_field.position.1 == 7 || current_field.position.0 == 7 {
+                    return (current_field, None);
                 }
 
                 let new_position = (
@@ -206,8 +206,8 @@ pub mod movements {
                 _next_field = get_next_field(board, new_position);
             } else {
                 // case down-left
-                if current_field.position.0 == 0 || current_field.position.1 == 7 {
-                    return current_field;
+                if current_field.position.1 == 0 || current_field.position.0 == 7 {
+                    return (current_field, None);
                 }
 
                 let new_position = (
@@ -222,30 +222,31 @@ pub mod movements {
         match &_next_field.content {
             Some(figure) => {
                 if &figure.color == piece_color {
-                    return current_field;
+                    return (current_field, None);
                 };
             }
             None => match move_history {
                 Some(move_history) => {
-                    if is_en_passant_possible(
+                    let en_passant_results = is_en_passant_possible(
                         move_history,
                         board,
                         current_field,
                         piece_color,
                         to_the_right, // where the pawn is meant to move indicates where to check
                         false,
-                    ) {
-                        return _next_field;
+                    );
+                    if en_passant_results.0 {
+                        return (_next_field, en_passant_results.1);
                     } else {
                         // if the pawn can't throw with a en-passant move then return the current field
-                        return current_field;
+                        return (current_field, None);
                     }
                 }
-                None => return current_field,
+                None => return (current_field, None),
             },
         }
 
-        _next_field
+        (_next_field, None)
     }
 
     //private functions
@@ -269,7 +270,8 @@ pub mod movements {
 
 // special move / throws checking
 
-// TODO - Remove the pawn that was thrown with the en-passant
+// return coordinates that indicate on which field a piece was thrown by a special move
+
 /// Checks whether the pawn can throw another pawn of the opposite color.
 ///
 /// ```
@@ -291,28 +293,28 @@ fn is_en_passant_possible(
     pawn_color: &FigureColor,
     checking_on_right: bool, // for different cases in which direction a pawn move pattern is currently being checked
     is_white_side_top: bool, // I need to know on which side the piece colors are situated
-) -> bool {
+) -> (bool, Option<(usize, usize)>) {
     // just to make sure that the piece on the current field is a pawn
     match &current_field.content {
         Some(figure) => {
             if figure.figure_type != FigureType::Pawn {
-                return false;
+                return (false, None);
             }
         }
-        None => return false,
+        None => return (false, None),
     }
     // check if the pawn is on a necessary board row -> index of 4th and 5th row
     if current_field.position.0 != 3 && current_field.position.0 != 4 {
-        return false;
+        return (false, None);
     }
     // check if the current pawn is on the right valid row depending on which side his pieces are
     if !pawn_situated_on_right_field(current_field.position.0, is_white_side_top, pawn_color) {
-        return false;
+        return (false, None);
     }
 
     // if there are pawns next to the current pawn
     // set the values to true
-    let data_of_piece: (bool, Uuid) = check_if_pawn_is_on_next_field(
+    let data_of_piece: (bool, Uuid, Option<(usize, usize)>) = check_if_pawn_is_on_next_field(
         checking_on_right,
         board,
         (
@@ -328,7 +330,7 @@ fn is_en_passant_possible(
         let last_move_in_history: &Move = move_history.get_last_item();
         // when its not the pawn that moved in the last move then return false
         if data_of_piece.1 != last_move_in_history.piece_id {
-            return false;
+            return (false, None);
         }
         // determine wether the pawn has moved two fields or not
         // if not return false
@@ -337,13 +339,13 @@ fn is_en_passant_possible(
             .0
             .abs_diff(last_move_in_history.from.0);
         if step_cound_of_pawn != 2 {
-            return false;
+            return (false, None);
         }
         // -> if yes return yes
-        return true;
+        return (true, data_of_piece.2);
     }
     // doesnt it matched the conditions return false
-    false
+    (false, None)
 }
 
 // helper functions
@@ -359,28 +361,43 @@ fn check_if_pawn_is_on_next_field(
     board: &Board,
     pawn_position: (usize, usize),
     pawn_color: &FigureColor,
-) -> (bool, Uuid) {
+) -> (bool, Uuid, Option<(usize, usize)>) {
+    // TODO - Need to be careful can't subtract from 0 when its an unsigned integer
     if checking_on_right {
+        if pawn_position.1 == 7 {
+            return (false, Uuid::new_v4(), None);
+        }
         match &board.content[pawn_position.0][pawn_position.1 + 1].content {
             Some(figure) => {
                 if figure.figure_type == FigureType::Pawn && &figure.color != pawn_color {
-                    return (true, figure.id);
+                    return (
+                        true,
+                        figure.id,
+                        Some((pawn_position.0, pawn_position.1 + 1)),
+                    );
                 }
             }
-            None => return (false, Uuid::new_v4()),
+            None => return (false, Uuid::new_v4(), None),
         }
     } else {
+        if pawn_position.1 == 0 {
+            return (false, Uuid::new_v4(), None);
+        }
         // check on the left
         match &board.content[pawn_position.0][pawn_position.1 - 1].content {
             Some(figure) => {
                 if figure.figure_type == FigureType::Pawn && &figure.color != pawn_color {
-                    return (true, figure.id);
+                    return (
+                        true,
+                        figure.id,
+                        Some((pawn_position.0, pawn_position.1 - 1)),
+                    );
                 }
             }
-            None => return (false, Uuid::new_v4()),
+            None => return (false, Uuid::new_v4(), None),
         }
     }
-    (false, Uuid::new_v4())
+    (false, Uuid::new_v4(), None)
 }
 
 /// Determines if a pawn of a specific color is situated on the right field row.

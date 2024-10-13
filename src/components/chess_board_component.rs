@@ -139,6 +139,13 @@ pub fn render_chess_board(ctx: &Context, game: &mut Game) {
                         }),
                         None => panic!("New move entry for move history regonized BUT received an empty field object!"),
                     }
+                    // if a piece was thrown by a special move like "En-Passant"
+                    match checking_results.coordinates_of_piece_thrown_by_special_move {
+                        Some(coordinates_of_piece) => {
+                            game.delete_field_content(coordinates_of_piece.1, coordinates_of_piece.0);
+                        },
+                        None => ()
+                    }
                 }
             }
         });

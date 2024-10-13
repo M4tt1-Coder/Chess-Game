@@ -301,4 +301,6 @@ pub struct CheckingResults {
     pub is_there_new_move_entry: bool,
     /// Data of the piece (position, piece id)
     pub data_of_piece: Option<((u8, u8), Uuid)>,
+    /// When a pawn for example was thrown by an en-passant move it needs to be deleted
+    pub coordinates_of_piece_thrown_by_special_move: Option<(usize, usize)>,
 }

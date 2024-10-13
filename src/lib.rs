@@ -93,8 +93,8 @@ impl Game {
         for row in &board.content {
             for field in row {
                 if field.selected {
-                    x = field.position.0 as usize;
-                    y = field.position.1 as usize;
+                    x = field.position.1 as usize;
+                    y = field.position.0 as usize;
                 }
             }
         }
@@ -103,28 +103,28 @@ impl Game {
 
     fn dont_select_field_anymore(&self, x: usize, y: usize) {
         let mut board_clone = self.field.try_lock().unwrap();
-        board_clone.content[x][y].selected = false;
+        board_clone.content[y][x].selected = false;
         drop(board_clone);
         //self.field.try_lock().unwrap().content[x][y].selected = false;
     }
 
     fn select_field(&self, x: usize, y: usize) {
         let mut board_clone = self.field.try_lock().unwrap();
-        board_clone.content[x][y].selected = true;
+        board_clone.content[y][x].selected = true;
         drop(board_clone);
         // self.field.try_lock().unwrap().content[x][y].selected = true;
     }
 
     fn delete_field_content(&self, x: usize, y: usize) {
         let mut board_clone = self.field.try_lock().unwrap();
-        board_clone.content[x][y].content = None;
+        board_clone.content[y][x].content = None;
         drop(board_clone);
         //self.field.try_lock().unwrap().content[x][y].content = None;
     }
 
     fn assign_new_field_content(&self, x: usize, y: usize, content: Option<Figure>) {
         let mut board_clone = self.field.try_lock().unwrap();
-        board_clone.content[x][y].content = content;
+        board_clone.content[y][x].content = content;
         drop(board_clone);
         //self.field.try_lock().unwrap().content[x][y].content = content;
     }
@@ -154,7 +154,7 @@ impl Game {
                         FigureColor::Black => FigureColor::Black,
                         _ => FigureColor::NotFound,
                     };
-                    self.delete_field_content(field.position.0 as usize, field.position.1 as usize);
+                    self.delete_field_content(field.position.1 as usize, field.position.0 as usize);
 
                     figure_content = Some(Figure::new(figure_type, figure_color, Some(piece.id)));
                 }
@@ -162,8 +162,8 @@ impl Game {
         }
 
         self.assign_new_field_content(
-            new_field.position.0 as usize,
             new_field.position.1 as usize,
+            new_field.position.0 as usize,
             figure_content,
         );
     }
