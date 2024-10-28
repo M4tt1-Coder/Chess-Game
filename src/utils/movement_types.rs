@@ -362,7 +362,6 @@ fn check_if_pawn_is_on_next_field(
     pawn_position: (usize, usize),
     pawn_color: &FigureColor,
 ) -> (bool, Uuid, Option<(usize, usize)>) {
-    // TODO - Need to be careful can't subtract from 0 when its an unsigned integer
     if checking_on_right {
         if pawn_position.1 == 7 {
             return (false, Uuid::new_v4(), None);

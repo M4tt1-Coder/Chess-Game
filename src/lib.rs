@@ -25,9 +25,13 @@ use components::{
 use std::sync::{Arc, Mutex};
 
 //constants
+/// Constant for the player one.
 const PLAYER_ONE_NUMBER: u8 = 1;
+/// Constant for the player two.
 const PLAYER_TWO_NUMBER: u8 = 2;
+/// The milliseconds between each save of the game state.
 const SAVE_INTERVAL: u64 = 10;
+/// The size of each field in pixels.
 pub const FIELD_SIZE: f32 = 55.;
 
 //#[derive(Debug, PartialEq)]
@@ -56,7 +60,9 @@ pub struct Game {
 }
 
 impl Game {
-    //create new game instance
+    /// Creates a new game instance.
+    ///
+    /// Just uses default settings for a game object.
     pub fn new(/*ticker: Ticker*/) -> Game {
         Game {
             //ticker,
@@ -72,7 +78,12 @@ impl Game {
             moves_history: MoveHistory::new(),
         }
     }
-    //set game to default state when starting a new game
+
+    /// Sets the game to default state when starting a new game.
+    ///
+    /// New player instances will be initialized with the current round number updated.
+    ///
+    /// The move history will be cleared.
     pub fn reset(&mut self) {
         self.field = default_field();
         self.winner = Winner::NotSet;
@@ -84,7 +95,10 @@ impl Game {
         self.moves_history = MoveHistory::new();
     }
 
-    pub fn field_not_selected_anymore(&self) {
+    /// Checks if a field is currently selected.
+    ///
+    /// Unchecks the selected state of that field.
+    pub fn any_field_not_selected_anymore(&self) {
         let board_clone = self.field.try_lock().unwrap();
         let board = replicate(&board_clone);
         drop(board_clone);
@@ -101,18 +115,22 @@ impl Game {
         self.dont_select_field_anymore(x, y);
     }
 
+    /// Takes in the coordinates of a field and unselectes the according field.
+    ///
+    /// Drops the MutexGuard after unselecting the field.
     fn dont_select_field_anymore(&self, x: usize, y: usize) {
         let mut board_clone = self.field.try_lock().unwrap();
         board_clone.content[y][x].selected = false;
         drop(board_clone);
-        //self.field.try_lock().unwrap().content[x][y].selected = false;
     }
 
+    /// Uses the coordinates of a field to apply the selected state to the field.
+    ///
+    /// MutexGuard is dropped after selecting the field.
     fn select_field(&self, x: usize, y: usize) {
         let mut board_clone = self.field.try_lock().unwrap();
         board_clone.content[y][x].selected = true;
         drop(board_clone);
-        // self.field.try_lock().unwrap().content[x][y].selected = true;
     }
 
     fn delete_field_content(&self, x: usize, y: usize) {

@@ -5,16 +5,26 @@ use crate::{
 };
 use uuid::Uuid;
 
+/// Represents the entire chess board.
+///
+/// Contains the 8x8 field grid.
 pub struct Board {
+    /// The 8x8 field grid representing the chess board.
     pub content: Vec<Vec<Field>>,
 }
 
 impl Board {
+    /// Creates a new chess board with default field data.
+    ///
+    /// The default field is passed as an argument.
     pub fn new(content: Vec<Vec<Field>>) -> Board {
         Board { content }
     }
 }
 
+/// Creates a new instance of a board.
+///
+/// Returns the copy of the board.
 pub fn replicate(board: &Board) -> Board {
     let mut output_board = empty_board();
     for row in &board.content {
@@ -30,10 +40,17 @@ pub fn replicate(board: &Board) -> Board {
     }
 }
 
+/// Used for creating an empty board.
 fn empty_board() -> Vec<Vec<Field>> {
     vec![]
 }
 
+/// A player object describes a player in the game.
+///
+/// Stores which color the player has and the name of the player.
+///
+/// Holds information about how many seconds the player has left to make a move and
+/// if it is his turn.
 #[derive(PartialEq, Debug)]
 pub struct Player {
     pub figure_color: FigureColor,
@@ -46,6 +63,14 @@ pub struct Player {
 }
 
 impl Player {
+    /// Takes in an identification number for a player and
+    /// the number of the current round.
+    ///
+    /// Returns a new instance of a player.
+    ///
+    /// ```
+    ///     let new_player: Player = Player::new(1, 3);
+    /// ```
     pub fn new(player_number: u8, current_round: u8) -> Player {
         Player {
             figure_color: get_player_figure_color(player_number, current_round),
@@ -55,12 +80,22 @@ impl Player {
         }
     }
 
+    /// Updates the player's name and seconds of his current time left over.
+    ///
+    /// ```
+    ///     let player: Player = Player::new(1, 1);
+    ///     player.update(3000, "Paul Berger")
+    /// ```
     pub fn update(&mut self, secs: u16, name: String) {
         self.name = name;
         self.seconds = secs;
     }
 }
 
+/// Represents a individual field on the board.
+///
+/// Stores a optional figure on the field, information if it was selected by a user.
+/// It also holds its coordinates.
 #[derive(PartialEq, Debug)]
 pub struct Field {
     /// playing figure in the field when there's one
@@ -87,6 +122,11 @@ pub struct Field {
     pub selected: bool,
 }
 
+/// A representation of a piece on the board.
+///
+/// It can have different types. ( Bishop, Queen, etc. ... )
+///
+/// Provides information about its color, id  and if it has been thrown.
 #[derive(PartialEq, Debug)]
 pub struct Figure {
     /// how the figure can move -> defines the figure typ
@@ -149,6 +189,14 @@ impl FigureTrait for Figure {
 }
 
 impl Field {
+    /// Just returns a reference to a field.
+    ///
+    /// Mostly for shortterm declarations.
+    ///
+    /// ```
+    ///     // This is a reference to a field on the heap.
+    ///     let new_field_ref: &Field = Field::as_ref();
+    /// ```
     pub fn as_ref<'a>() -> &'a Field {
         &Field {
             content: None,
@@ -157,6 +205,10 @@ impl Field {
         }
     }
 
+    /// Copies a the instance of the field itself.
+    ///
+    /// Some properties doesn't implement the copy trait, so they need to be
+    /// reassigned manually.
     pub fn clone_myself(&self) -> Field {
         let my_content: Option<Figure> = match &self.content {
             Some(piece) => {
@@ -184,6 +236,9 @@ impl Field {
         }
     }
 
+    /// Creates a new instance of a field.
+    ///
+    /// Holds default values for all fields.
     pub fn new() -> Field {
         Field {
             content: None,

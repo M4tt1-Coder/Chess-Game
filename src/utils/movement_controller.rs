@@ -42,14 +42,12 @@ pub fn begin_rule_checking(
                 && can_player_move_this_pieces(game, &field.content.as_ref().unwrap().color)
             //depending on the players piece color and the selected figure's color -> allow the move or not
             {
-                // TODO - Player turns should not change when the player clicks two times on a field with a piece
-
                 game.move_figure_to_new_field(field, selected_field);
                 game.next_players_turn();
                 has_user_moved_piece = true;
             }
 
-            game.field_not_selected_anymore();
+            game.any_field_not_selected_anymore();
             //
             if has_user_moved_piece {
                 CheckingResults {
@@ -72,7 +70,7 @@ pub fn begin_rule_checking(
             }
         } else {
             //first make sure no field is selected
-            game.field_not_selected_anymore();
+            game.any_field_not_selected_anymore();
 
             //than select a new field
 

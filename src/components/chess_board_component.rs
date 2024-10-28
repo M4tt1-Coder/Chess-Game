@@ -9,9 +9,11 @@ use crate::{
         render_player_dashboard_info, render_thrown_pieces,
     },
     structs::{replicate, Board, Field, Move},
-    utils::movement_controller::begin_rule_checking,
+    utils::{chess_rules::has_a_pawn_reached_end, movement_controller::begin_rule_checking},
     Game, FIELD_SIZE,
 };
+
+use super::pawn_transformation_component::render_pawn_conversion_popup;
 
 pub fn render_chess_board(ctx: &Context, game: &mut Game) {
     SidePanel::new(Side::Left, "PlayerDashboards")
@@ -65,59 +67,75 @@ pub fn render_chess_board(ctx: &Context, game: &mut Game) {
     CentralPanel::default().show(ctx, |ui| {
         ui.with_layout(Layout::top_down(Align::Center), |ui| {
             let mut field_was_clicked = false;
-            let mut selected_field: &Field = Field::as_ref();
+            let mut selected_field = Field::as_ref();
             let board_clone = game.field.try_lock().unwrap();
             let board: Board = replicate(&board_clone);
             drop(board_clone);
-            for row in &board.content {
-                ui.horizontal(|ui| {
-                    for field in row {
-                        match &field.content {
-                            Some(content) => {
-                                if ui
-                                    .add_sized(
-                                        [FIELD_SIZE, FIELD_SIZE],
-                                        Button::image(Image::new(get_figure_path(
-                                            &content.figure_type,
-                                            &content.color,
-                                        )))
-                                        .fill(
-                                            get_field_color_on_coordinates(
-                                                field.position.0,
-                                                field.position.1,
-                                            ),
-                                        ),
-                                    )
-                                    .clicked()
-                                {
-                                    //set other players turn to true when the current player moved a piece
-                                    //select this field -> unselect the previous field
-                                    //button_interaction(game, &board_clone.content, &field);
-                                    field_was_clicked = true;
-                                    selected_field = field;
+            // load information about a possible pawn on the one end of the chess board
+            let data_of_pawn_at_the_end = has_a_pawn_reached_end(&board,false);
+            // Depending ot the case that a pawn is on the end of the board
+            // -> show a window where the user can select his new piece
+            // -> show the current board
+            match data_of_pawn_at_the_end {
+                // render the selection window
+                Some(pawn_info)=> {
+                    render_pawn_conversion_popup( game, pawn_info.0, pawn_info.1, ui);
+                }
+                // display the chess board
+                None => {
+                    for row in &board.content {
+                        ui.horizontal(|ui| {
+                            for field in row {
+                                match &field.content {
+                                    Some(content) => {
+                                        if ui
+                                            .add_sized(
+                                                [FIELD_SIZE, FIELD_SIZE],
+                                                Button::image(Image::new(get_figure_path(
+                                                    &content.figure_type,
+                                                    &content.color,
+                                                )))
+                                                .fill(
+                                                    get_field_color_on_coordinates(
+                                                        field.position.0,
+                                                        field.position.1,
+                                                    ),
+                                                ),
+                                            )
+                                            .clicked()
+                                        {
+                                            //set other players turn to true when the current player moved a piece
+                                            //select this field -> unselect the previous field
+                                            //button_interaction(game, &board_clone.content, &field);
+                                            field_was_clicked = true;
+                                            selected_field = field;
+                                        }
+                                    }
+                                    None => {
+                                        if ui
+                                            .add_sized(
+                                                [FIELD_SIZE, FIELD_SIZE],
+                                                Button::new("").fill(get_field_color_on_coordinates(
+                                                    field.position.0,
+                                                    field.position.1,
+                                                )),
+                                            )
+                                            .clicked()
+                                        {
+                                            field_was_clicked = true;
+                                            selected_field = field;
+                                        }
+                                    }
                                 }
                             }
-                            None => {
-                                if ui
-                                    .add_sized(
-                                        [FIELD_SIZE, FIELD_SIZE],
-                                        Button::new("").fill(get_field_color_on_coordinates(
-                                            field.position.0,
-                                            field.position.1,
-                                        )),
-                                    )
-                                    .clicked()
-                                {
-                                    field_was_clicked = true;
-                                    selected_field = field;
-                                }
-                            }
-                        }
+                        });
+        
+                        ui.add_space(8.);
                     }
-                });
-
-                ui.add_space(8.);
+                    
+                }
             }
+            
             // Execute actions when a field was clicked
             if field_was_clicked {
                 // 1.) Call the rule checker endpoints to check if the user made a valid move with a piece

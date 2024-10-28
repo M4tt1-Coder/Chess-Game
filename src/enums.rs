@@ -24,11 +24,11 @@ pub enum FigureType {
     Pawn,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum FigureColor {
     White,
     Black,
-    NotFound
+    NotFound,
 }
 #[derive(PartialEq, Debug)]
 pub enum Environment {

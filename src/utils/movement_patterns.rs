@@ -2,6 +2,8 @@
 //!
 //! A 'movement-pattern' is basically a closure calling the movement-function in a strict order.
 
+// TODO - It should be impossible to throw a king of the board.
+
 // using statements
 
 //constants
@@ -84,7 +86,9 @@ impl MovementPatternExecutor for PawnPatterns {
             let (last_field, position_of_thrown_piece_result) =
                 pattern(board, current_field, _piece_color, move_history);
             // when the move was valid assing the data
-            if last_field == selected_field {
+            // in case the pattern returns an field that is the same as the current field
+            // -> don't proceed
+            if last_field == selected_field && last_field.position != current_field.position {
                 position_of_thrown_piece = position_of_thrown_piece_result;
                 leads_to_selected_field = true;
             }
@@ -104,8 +108,6 @@ impl MovementPatternExecutor for PawnPatterns {
                 ) -> (&'a Field, Option<(usize, usize)>),
             >,
         > = Vec::new();
-
-        // TODO - a pawn changes into a different piece when it reaches the end of the board -> implement this rule
 
         // first pattern
         let one_forward: Box<

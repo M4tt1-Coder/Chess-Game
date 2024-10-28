@@ -42,7 +42,7 @@ fn main() -> eframe::Result {
         }),
     )
 }
-
+// TODO - Give black pieces more contrast on black backgrounds
 // TODO - Add functionality to rotate the board -> adjust the rule logic
 // TODO - settings component to set name players or time choice
 // TODO - Add benchmarks & tests to general new functions and methods

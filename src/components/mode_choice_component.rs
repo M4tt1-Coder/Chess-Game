@@ -1,8 +1,17 @@
 //using statements
 use eframe::egui::{self, Align, CentralPanel, Color32, Context, ImageButton, Layout, RichText};
 
-use crate::{enums::{PlayMode, Environment}, helper::horizontal_seperator, Game};
+use crate::{
+    enums::{Environment, PlayMode},
+    helper::horizontal_seperator,
+    Game,
+};
 
+/// Render the playmode selection component.
+///
+/// The player chooses between local user against user playing mode and local match with AI.
+///
+/// Defines the environment for the game. ( browser, desktop )
 pub fn render_playmode_component(ctx: &Context, game: &mut Game) {
     //central penal
     CentralPanel::default().show(ctx, |ui| {
